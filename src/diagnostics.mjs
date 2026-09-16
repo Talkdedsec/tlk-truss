@@ -27,6 +27,18 @@ const catalog = {
     en: () => 'malformed connection',
     tr: () => 'bozuk bağlantı',
   },
+  E107: {
+    en: ({ token }) => `block "${token}" is never closed`,
+    tr: ({ token }) => `"${token}" bloğu hiç kapatılmamış`,
+  },
+  E108: {
+    en: () => 'end without an open block',
+    tr: () => 'açık blok yokken end',
+  },
+  E109: {
+    en: ({ token, hint }) => `unknown block "${token}"; known blocks: ${hint}`,
+    tr: ({ token, hint }) => `bilinmeyen blok "${token}"; bilinen bloklar: ${hint}`,
+  },
   E110: {
     en: ({ token }) => `"${token}" is not a key=value attribute`,
     tr: ({ token }) => `"${token}" anahtar=değer biçiminde değil`,
@@ -78,6 +90,10 @@ const catalog = {
   W302: {
     en: ({ token }) => `"${token}" is declared but never connected`,
     tr: ({ token }) => `"${token}" bildirilmiş ama hiçbir yere bağlanmamış`,
+  },
+  W303: {
+    en: () => 'blocks are only drawn in the sequence view',
+    tr: () => 'bloklar yalnızca sekans görünümünde çizilir',
   },
   W401: {
     en: ({ token }) => `no node claims "${token}"`,

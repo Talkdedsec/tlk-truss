@@ -1,8 +1,8 @@
 {
   "name": "@talkdedsec/tlk-truss",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Architecture diagrams bound to real code \u2014 text in, single-file HTML out, CI fails when the drawing drifts.",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "author": "Talkdedsec",
   "type": "module",
   "bin": {
@@ -23,7 +23,8 @@
     "test": "node --test",
     "test:browser": "node --test test-browser/page.mjs",
     "test:all": "npm test && npm run test:browser",
-    "build:docs": "node scripts/build-docs.mjs"
+    "build:docs": "node scripts/build-docs.mjs",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "architecture",
@@ -41,5 +42,8 @@
   "exports": {
     ".": "./src/index.mjs",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

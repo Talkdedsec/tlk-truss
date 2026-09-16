@@ -136,3 +136,75 @@ test('a note on a message is drawn clear of every lifeline', () => {
   assert.ok(diagram.notes[0].x > rightmost);
   assert.match(renderDiagram(diagram, model), /class="note"/);
 });
+
+test('a block frames the messages inside it and nothing else', () => {
+  const { diagram } = compile(`
+view sequence
+node a "A"
+node b "B"
+a -> b : before
+block loop "until it takes"
+a -> b : try
+b -> a : no
+end
+a -> b : after
+`);
+  assert.equal(diagram.frames.length, 1);
+  const frame = diagram.frames[0];
+  const inside = diagram.messages.filter((message) => message.frame === 'f1');
+  const outside = diagram.messages.filter((message) => !message.frame);
+  assert.equal(inside.length, 2);
+  for (const message of inside) {
+    assert.ok(message.y > frame.y && message.y < frame.y + frame.h, 'inside the frame');
+  }
+  for (const message of outside) {
+    assert.ok(message.y < frame.y || message.y > frame.y + frame.h, 'outside the frame');
+  }
+  assert.equal(frame.kind, 'loop');
+  assert.equal(frame.label, 'until it takes');
+});
+
+test('blocks nest and the inner one is drawn inside the outer one', () => {
+  const { diagram } = compile(`
+view sequence
+node a "A"
+node b "B"
+block alt "card"
+a -> b : outer
+block opt "3-D Secure"
+a -> b : inner
+end
+end
+`);
+  const [outer, inner] = diagram.frames;
+  assert.ok(inner.y > outer.y);
+  assert.ok(inner.y + inner.h <= outer.y + outer.h);
+  assert.ok(inner.x >= outer.x);
+});
+
+test('an unclosed block and a stray end are both reported', () => {
+  const unclosed = compile('view sequence\nnode a "A"\nnode b "B"\nblock loop "x"\na -> b');
+  const stray = compile('view sequence\nnode a "A"\nnode b "B"\na -> b\nend');
+  assert.equal(unclosed.diagnostics[0].code, 'E107');
+  assert.equal(stray.diagnostics[0].code, 'E108');
+});
+
+test('an unknown block kind is refused with the list of known ones', () => {
+  const { diagnostics } = compile('view sequence\nnode a "A"\nnode b "B"\nblock whirl "x"\na -> b\nend');
+  assert.equal(diagnostics[0].code, 'E109');
+  assert.match(diagnostics[0].hint, /loop, alt, opt, par/);
+});
+
+test('blocks outside a sequence are a warning, not a drawing', () => {
+  const { model, diagnostics } = compile('node a "A"\nnode b "B"\nblock loop "x"\na -> b\nend');
+  assert.equal(diagnostics.some((entry) => entry.code === 'W303'), true);
+  assert.equal(model.frames.length, 0);
+});
+
+test('the Turkish block words mean the same thing', () => {
+  const { diagram } = compile(
+    'gorunum sekans\nnode a "A"\nnode b "B"\nblok dongu "tekrar"\na -> b\nson',
+  );
+  assert.equal(diagram.frames[0].kind, 'loop');
+  assert.equal(diagram.frames[0].label, 'tekrar');
+});

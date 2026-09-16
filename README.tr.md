@@ -80,6 +80,8 @@ pay -> bank : provizyon
 - `kod=` bağdır: bir yol ya da glob; virgülle birden fazla verilebilir
 - `not=` bir düğüme, sekansta bir mesaja not iliştirir:
   `api -> pay : "tahsilat" not="idempotent"`
+- sekansta `blok dongu|secenek|istege|paralel "neden"` … `son` arasındaki mesajları çerçeveler,
+  bloklar iç içe geçebilir
 - `#` yorum satırı başlatır
 
 Her anahtar kelimenin İngilizce yazımı da geçerli (`title`, `group`, `node`, `in=`, `kind=`,
@@ -90,7 +92,7 @@ Her anahtar kelimenin İngilizce yazımı da geçerli (`title`, `group`, `node`,
 | `gorunum` | Ne çizer | Ne değişir |
 |---|---|---|
 | `mimari` | servisler, depolar, sınırlar | gruplu kutular, yukarıdan aşağı katmanlar |
-| `sekans` | tek bir akış, mesaj mesaj | yaşam çizgileri, etkinleşme çubukları, notlar, kendine çağrı |
+| `sekans` | tek bir akış, mesaj mesaj | yaşam çizgileri, etkinleşme çubukları, notlar, bloklar, kendine çağrı |
 | `veriakisi` | bir boru hattı | soldan sağa, kaynak ve havuz eğik çizilir |
 | `durum` | bir durum makinesi | hap kutular, başlangıç noktası, bitiş halkası, kendine geçiş döngüsü |
 
@@ -124,7 +126,7 @@ bir CI işinin ihtiyacı olan tek şey bu:
 Hazır bir action da var:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.2.0
+- uses: Talkdedsec/tlk-truss@v0.3.0
   with:
     sources: docs/*.truss
     uncovered: true

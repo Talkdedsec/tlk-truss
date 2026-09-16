@@ -30,7 +30,38 @@ export function toSource(model) {
   }
   lines.push('');
 
+  const frameOf = new Map((model.frames ?? []).map((frame) => [frame.id, frame]));
+  const chainFor = (id) => {
+    const chain = [];
+    let cursor = id;
+    while (cursor && frameOf.has(cursor)) {
+      chain.unshift(frameOf.get(cursor));
+      cursor = frameOf.get(cursor).parent;
+    }
+    return chain;
+  };
+  let openFrames = [];
+  const indent = () => '  '.repeat(openFrames.length);
+
   for (const edge of model.edges) {
+    const wanted = chainFor(edge.frame);
+    let shared = 0;
+    while (
+      shared < openFrames.length &&
+      shared < wanted.length &&
+      openFrames[shared].id === wanted[shared].id
+    ) {
+      shared += 1;
+    }
+    while (openFrames.length > shared) {
+      openFrames.pop();
+      lines.push(`${indent()}end`);
+    }
+    for (let i = shared; i < wanted.length; i += 1) {
+      const frame = wanted[i];
+      lines.push(`${indent()}block ${frame.kind}${frame.label ? ` ${quote(frame.label)}` : ''}`);
+      openFrames.push(frame);
+    }
     const arrow = arrowFor[edge.style] ?? '->';
     const attrs = [
       edge.code ? `code=${edge.code}` : '',
@@ -41,7 +72,11 @@ export function toSource(model) {
       : edge.label
         ? ` : ${edge.label}`
         : '';
-    lines.push(`${edge.from} ${arrow} ${edge.to}${tail}`);
+    lines.push(`${indent()}${edge.from} ${arrow} ${edge.to}${tail}`);
+  }
+  while (openFrames.length) {
+    openFrames.pop();
+    lines.push(`${indent()}end`);
   }
   return `${lines.join('\n')}\n`;
 }

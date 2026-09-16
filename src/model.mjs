@@ -132,6 +132,7 @@ export function build(spec) {
       style: entry.style ?? 'solid',
       note: entry.note ?? '',
       code: entry.code ?? '',
+      frame: entry.frame ?? '',
       line: entry.line,
     });
   }
@@ -139,6 +140,9 @@ export function build(spec) {
   for (const node of nodes) {
     if (node.degree === 0) report('W302', node.line, { token: node.id });
   }
+
+  const frames = spec.frames ?? [];
+  if (frames.length && kept !== 'sequence') report('W303', frames[0].line);
 
   return {
     model: {
@@ -150,6 +154,8 @@ export function build(spec) {
       groups,
       nodes,
       edges,
+      frames: kept === 'sequence' ? frames : [],
+      frameIndex: new Map(frames.map((frame) => [frame.id, frame])),
       nodeIndex,
     },
     diagnostics,

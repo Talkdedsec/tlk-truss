@@ -107,6 +107,10 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .lifeline { stroke: var(--line); stroke-dasharray: 4 6; }
 .message-label { fill: var(--text); font-size: 11.5px; }
 .bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }
+.frame .outline { fill: none; stroke: var(--line); }
+.frame .tab { fill: var(--raised); stroke: var(--line); }
+.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }
+.frame .caption { fill: var(--muted); font-size: 11px; }
 .note path { fill: var(--raised); stroke: var(--line); }
 .note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }
