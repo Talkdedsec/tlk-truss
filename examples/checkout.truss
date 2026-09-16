@@ -12,7 +12,7 @@ node bus     "Event bus"    kind=queue    code=src/layout/*.mjs
 shopper -> web  : submits the basket
 web     -> api  : POST /orders
 api     -> api  : validate the basket
-api     -> pay  : authorise 49.90 EUR
+api     -> pay  : "authorise 49.90 EUR" note="retried with the same key"
 pay     -> bank : card authorisation
 bank    -> pay  : approved
 pay     ~> bus  : payment.captured

@@ -106,6 +106,9 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }
 .lifeline { stroke: var(--line); stroke-dasharray: 4 6; }
 .message-label { fill: var(--text); font-size: 11.5px; }
+.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }
+.note path { fill: var(--raised); stroke: var(--line); }
+.note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }
 .pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
 `;

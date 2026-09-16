@@ -50,6 +50,9 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }
 .lifeline { stroke: var(--line); stroke-dasharray: 4 6; }
 .message-label { fill: var(--text); font-size: 11.5px; }
+.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }
+.note path { fill: var(--raised); stroke: var(--line); }
+.note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }
 .pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
 
@@ -107,7 +110,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
   <button id="lang"></button>
 </header>
 <main>
-<div id="canvas"><svg id="scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 795" width="1168" height="795" role="img"><defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--line-strong)"/></marker><marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="var(--line-strong)" stroke-width="1.4"/></marker></defs><g class="viewport">
+<div id="canvas"><svg id="scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1386 795" width="1386" height="795" role="img"><defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--line-strong)"/></marker><marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="var(--line-strong)" stroke-width="1.4"/></marker></defs><g class="viewport">
 <g class="lifelines">
 <line class="lifeline" x1="114.0" y1="100.0" x2="114.0" y2="747.0"/>
 <line class="lifeline" x1="302.0" y1="100.0" x2="302.0" y2="747.0"/>
@@ -115,6 +118,12 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 <line class="lifeline" x1="678.0" y1="100.0" x2="678.0" y2="747.0"/>
 <line class="lifeline" x1="866.0" y1="100.0" x2="866.0" y2="747.0"/>
 <line class="lifeline" x1="1054.0" y1="100.0" x2="1054.0" y2="747.0"/>
+</g>
+<g class="bars">
+<rect class="bar" data-id="bank" x="860.5" y="396.0" width="11" height="54.0" rx="2"/>
+<rect class="bar" data-id="pay" x="672.5" y="342.0" width="11" height="216.0" rx="2"/>
+<rect class="bar" data-id="api" x="484.5" y="200.0" width="11" height="412.0" rx="2"/>
+<rect class="bar" data-id="web" x="296.5" y="146.0" width="11" height="520.0" rx="2"/>
 </g>
 <g class="messages">
 <g class="edge" data-from="shopper" data-to="web">
@@ -157,6 +166,9 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 <line class="stroke" x1="302.0" y1="666.0" x2="120.0" y2="666.0" marker-end="url(#tip)"/>
 <text class="message-label" text-anchor="middle" x="208.0" y="657.0">order confirmed</text>
 </g>
+</g>
+<g class="notes">
+<g class="note" transform="translate(1150.0 342.0)"><path d="M 0 -13 H 170.5 L 179.5 -4 V 13 H 0 Z"/><text x="11" y="4">retried with the same key</text></g>
 </g>
 <g class="nodes">
 <g class="node" data-id="shopper" tabindex="0" transform="translate(48.0 48.0)">
@@ -207,7 +219,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 </main>
 <footer id="stats"></footer>
 </div>
-<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"checkout-call-sequence","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Checkout call sequence\nview   sequence\n\nnode shopper \"Shopper\" kind=client\nnode web \"Storefront\" code=src/cli.mjs\nnode api \"API Gateway\" code=src/commands/*.mjs\nnode pay \"Payment\" code=src/check.mjs\nnode bank \"Acquirer\" kind=external\nnode bus \"Event bus\" kind=queue code=src/layout/*.mjs\n\nshopper -> web : submits the basket\nweb -> api : POST /orders\napi -> api : validate the basket\napi -> pay : authorise 49.90 EUR\npay -> bank : card authorisation\nbank -> pay : approved\npay ~> bus : payment.captured\npay -> api : receipt\napi -> web : 201 Created\nweb -> shopper : order confirmed\n"};</script>
+<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"checkout-call-sequence","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Checkout call sequence\nview   sequence\n\nnode shopper \"Shopper\" kind=client\nnode web \"Storefront\" code=src/cli.mjs\nnode api \"API Gateway\" code=src/commands/*.mjs\nnode pay \"Payment\" code=src/check.mjs\nnode bank \"Acquirer\" kind=external\nnode bus \"Event bus\" kind=queue code=src/layout/*.mjs\n\nshopper -> web : submits the basket\nweb -> api : POST /orders\napi -> api : validate the basket\napi -> pay : \"authorise 49.90 EUR\" note=\"retried with the same key\"\npay -> bank : card authorisation\nbank -> pay : approved\npay ~> bus : payment.captured\npay -> api : receipt\napi -> web : 201 Created\nweb -> shopper : order confirmed\n"};</script>
 <script>window.__trussEngine = (function () {
 const directives = new Map([
   ['title', 'title'],
@@ -557,6 +569,7 @@ function build(spec) {
       to: entry.to,
       label: entry.label ?? '',
       style: entry.style ?? 'solid',
+      note: entry.note ?? '',
       line: entry.line,
     });
   }
@@ -615,7 +628,12 @@ function toSource(model) {
 
   for (const edge of model.edges) {
     const arrow = arrowFor[edge.style] ?? '->';
-    lines.push(`${edge.from} ${arrow} ${edge.to}${edge.label ? ` : ${edge.label}` : ''}`);
+    const tail = edge.note
+      ? ` : ${quote(edge.label)} note=${quote(edge.note)}`
+      : edge.label
+        ? ` : ${edge.label}`
+        : '';
+    lines.push(`${edge.from} ${arrow} ${edge.to}${tail}`);
   }
   return `${lines.join('\n')}\n`;
 }
@@ -948,6 +966,7 @@ function place(layers, links, sizes, { passes = 6 } = {}) {
 
 
 const sequenceMetrics = {
+  barWidth: 11,
   headHeight: 52,
   headGap: 56,
   firstMessage: 46,
@@ -982,6 +1001,7 @@ function layoutSequence(model) {
       from: edge.from,
       to: edge.to,
       label: edge.label,
+      note: edge.note ?? '',
       style: edge.style,
       self,
       y: depth,
@@ -996,17 +1016,59 @@ function layoutSequence(model) {
     return message;
   });
 
+  const bars = [];
+  const open = [];
+  for (const message of messages) {
+    if (message.self || message.style !== 'solid') continue;
+    const top = open[open.length - 1];
+    if (top && top.participant === message.from && top.caller === message.to) {
+      top.end = message.y;
+      bars.push(open.pop());
+      continue;
+    }
+    open.push({
+      participant: message.to,
+      caller: message.from,
+      start: message.y,
+      end: 0,
+      depth: open.filter((entry) => entry.participant === message.to).length,
+    });
+  }
+
   const lifelineEnd = depth + sequenceMetrics.messageGap / 2;
+  for (const bar of open) {
+    bar.end = lifelineEnd;
+    bars.push(bar);
+  }
+  for (const bar of bars) {
+    const lane = laneOf.get(bar.participant);
+    bar.x = lane.centre - sequenceMetrics.barWidth / 2 + bar.depth * 5;
+    bar.y = bar.start;
+    bar.h = Math.max(sequenceMetrics.barWidth, bar.end - bar.start);
+  }
+
+  const rail = Math.max(...lanes.map((lane) => lane.x + lane.w)) + sequenceMetrics.noteGap;
+  const notes = messages
+    .filter((message) => message.note)
+    .map((message) => ({
+      text: message.note,
+      x: rail,
+      y: message.y + (message.self ? message.drop / 2 : 0),
+      index: message.index,
+    }));
   const width =
     Math.max(
       cursor - sequenceMetrics.headGap,
       ...messages.map((message) => message.reach + sequenceMetrics.margin),
+      ...notes.map((note) => note.x + note.text.length * 6.4 + 28),
     ) + sequenceMetrics.margin;
 
   return {
     kind: 'sequence',
     lanes,
     messages,
+    bars,
+    notes,
     lifelineEnd,
     width: Math.round(width),
     height: Math.round(lifelineEnd + sequenceMetrics.margin),
@@ -1561,6 +1623,15 @@ function renderSequence(diagram) {
   }
   parts.push('</g>');
 
+  parts.push('<g class="bars">');
+  for (const bar of diagram.bars) {
+    parts.push(
+      `<rect class="bar" data-id="${escapeXml(bar.participant)}" x="${bar.x.toFixed(1)}" ` +
+        `y="${bar.y.toFixed(1)}" width="11" height="${bar.h.toFixed(1)}" rx="2"/>`,
+    );
+  }
+  parts.push('</g>');
+
   parts.push('<g class="messages">');
   for (const message of diagram.messages) {
     const classes = ['edge', message.style === 'async' ? 'async' : '']
@@ -1597,6 +1668,18 @@ function renderSequence(diagram) {
       );
     }
     parts.push('</g>');
+  }
+  parts.push('</g>');
+
+  parts.push('<g class="notes">');
+  for (const note of diagram.notes) {
+    const text = trim(note.text, 44);
+    const width = text.length * 6.3 + 22;
+    parts.push(
+      `<g class="note" transform="translate(${note.x.toFixed(1)} ${note.y.toFixed(1)})">` +
+        `<path d="M 0 -13 H ${(width - 9).toFixed(1)} L ${width.toFixed(1)} -4 V 13 H 0 Z"/>` +
+        `<text x="11" y="4">${escapeXml(text)}</text></g>`,
+    );
   }
   parts.push('</g>');
 

@@ -13,6 +13,15 @@ export function renderSequence(diagram) {
   }
   parts.push('</g>');
 
+  parts.push('<g class="bars">');
+  for (const bar of diagram.bars) {
+    parts.push(
+      `<rect class="bar" data-id="${escapeXml(bar.participant)}" x="${bar.x.toFixed(1)}" ` +
+        `y="${bar.y.toFixed(1)}" width="11" height="${bar.h.toFixed(1)}" rx="2"/>`,
+    );
+  }
+  parts.push('</g>');
+
   parts.push('<g class="messages">');
   for (const message of diagram.messages) {
     const classes = ['edge', message.style === 'async' ? 'async' : '']
@@ -49,6 +58,18 @@ export function renderSequence(diagram) {
       );
     }
     parts.push('</g>');
+  }
+  parts.push('</g>');
+
+  parts.push('<g class="notes">');
+  for (const note of diagram.notes) {
+    const text = trim(note.text, 44);
+    const width = text.length * 6.3 + 22;
+    parts.push(
+      `<g class="note" transform="translate(${note.x.toFixed(1)} ${note.y.toFixed(1)})">` +
+        `<path d="M 0 -13 H ${(width - 9).toFixed(1)} L ${width.toFixed(1)} -4 V 13 H 0 Z"/>` +
+        `<text x="11" y="4">${escapeXml(text)}</text></g>`,
+    );
   }
   parts.push('</g>');
 

@@ -69,6 +69,7 @@ function help(s) {
     `      --lang ${s.phCode.padEnd(9)} ${s.optLang}`,
     `      --json          ${s.optJson}`,
     `      --ci            ${s.optCi}`,
+    `      --uncovered     ${s.optUncovered}`,
     `  -v, --version       ${s.optVersion}`,
     '',
   ].join('\n');
@@ -106,12 +107,14 @@ export function run(argv, io = console) {
 
   const options = {
     source: positional[1],
+    sources: positional.slice(1),
     out: typeof flags.out === 'string' ? flags.out : typeof flags.o === 'string' ? flags.o : '',
     root: typeof flags.root === 'string' ? flags.root : typeof flags.kok === 'string' ? flags.kok : '',
     lang,
     json: Boolean(flags.json),
     ci: Boolean(flags.ci),
     strict: Boolean(flags.strict || flags.kati),
+    uncovered: Boolean(flags.uncovered || flags.kapsanmayan),
     format:
       typeof flags.to === 'string'
         ? flags.to

@@ -87,3 +87,35 @@ test('globs translate the way the documentation promises', () => {
   assert.ok(toRegExp('src/index.ts').test('src/index.ts'));
   assert.equal(toRegExp('src/index.ts').test('src/index.tsx'), false);
 });
+
+test('the coverage report names the directories no node claims', () => {
+  const root = repo();
+  const model = compile('node auth "Auth" code=src/auth/**\nnode app "App"\nauth -> app');
+  const quiet = check(model, { root });
+  const loud = check(model, { root, uncovered: true });
+
+  assert.equal(quiet.diagnostics.length, 0);
+  assert.deepEqual(
+    loud.diagnostics.map((entry) => entry.token),
+    [],
+    'src/ is claimed, and node_modules is never counted',
+  );
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('a directory nobody drew is reported once, with the root as its place', () => {
+  const root = repo();
+  mkdirSync(join(root, 'workers'), { recursive: true });
+  writeFileSync(join(root, 'workers', 'nightly.ts'), '');
+
+  const result = check(compile('node auth "Auth" code=src/**\nnode app "App"\nauth -> app'), {
+    root,
+    uncovered: true,
+  });
+  assert.deepEqual(
+    result.diagnostics.map((entry) => [entry.code, entry.token]),
+    [['W401', 'workers/']],
+  );
+  assert.equal(result.diagnostics[0].where, root);
+  rmSync(root, { recursive: true, force: true });
+});

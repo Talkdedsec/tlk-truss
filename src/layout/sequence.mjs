@@ -1,6 +1,7 @@
 import { measure, metrics } from './place.mjs';
 
 export const sequenceMetrics = {
+  barWidth: 11,
   headHeight: 52,
   headGap: 56,
   firstMessage: 46,
@@ -35,6 +36,7 @@ export function layoutSequence(model) {
       from: edge.from,
       to: edge.to,
       label: edge.label,
+      note: edge.note ?? '',
       style: edge.style,
       self,
       y: depth,
@@ -49,17 +51,59 @@ export function layoutSequence(model) {
     return message;
   });
 
+  const bars = [];
+  const open = [];
+  for (const message of messages) {
+    if (message.self || message.style !== 'solid') continue;
+    const top = open[open.length - 1];
+    if (top && top.participant === message.from && top.caller === message.to) {
+      top.end = message.y;
+      bars.push(open.pop());
+      continue;
+    }
+    open.push({
+      participant: message.to,
+      caller: message.from,
+      start: message.y,
+      end: 0,
+      depth: open.filter((entry) => entry.participant === message.to).length,
+    });
+  }
+
   const lifelineEnd = depth + sequenceMetrics.messageGap / 2;
+  for (const bar of open) {
+    bar.end = lifelineEnd;
+    bars.push(bar);
+  }
+  for (const bar of bars) {
+    const lane = laneOf.get(bar.participant);
+    bar.x = lane.centre - sequenceMetrics.barWidth / 2 + bar.depth * 5;
+    bar.y = bar.start;
+    bar.h = Math.max(sequenceMetrics.barWidth, bar.end - bar.start);
+  }
+
+  const rail = Math.max(...lanes.map((lane) => lane.x + lane.w)) + sequenceMetrics.noteGap;
+  const notes = messages
+    .filter((message) => message.note)
+    .map((message) => ({
+      text: message.note,
+      x: rail,
+      y: message.y + (message.self ? message.drop / 2 : 0),
+      index: message.index,
+    }));
   const width =
     Math.max(
       cursor - sequenceMetrics.headGap,
       ...messages.map((message) => message.reach + sequenceMetrics.margin),
+      ...notes.map((note) => note.x + note.text.length * 6.4 + 28),
     ) + sequenceMetrics.margin;
 
   return {
     kind: 'sequence',
     lanes,
     messages,
+    bars,
+    notes,
     lifelineEnd,
     width: Math.round(width),
     height: Math.round(lifelineEnd + sequenceMetrics.margin),

@@ -78,6 +78,8 @@ pay -> bank : authorise
 - `:` after a connection carries its label
 - `kind=` is one of `service`, `store`, `queue`, `infra`, `client`, `external`, `job`
 - `code=` is the binding: a path or a glob, several separated by commas
+- `note=` hangs a note off a node, or off a message in a sequence:
+  `api -> pay : "charge" note="idempotent"`
 - `#` starts a comment
 
 Every keyword also has a Turkish spelling (`baslik`, `grup`, `dugum`, `icinde=`, `tur=`, `kod=`),
@@ -88,7 +90,7 @@ and the two can be mixed in one file.
 | `view` | What it draws | What changes |
 |---|---|---|
 | `architecture` | services, stores, boundaries | grouped boxes, layered top to bottom |
-| `sequence` | one run, message by message | lifelines, messages in source order, self calls |
+| `sequence` | one run, message by message | lifelines, activation bars, notes, self calls |
 | `dataflow` | a pipeline | left to right, sources and sinks drawn slanted |
 | `lifecycle` | a state machine | pills, a start dot, an end ring, self transitions as loops |
 
@@ -119,7 +121,15 @@ which is all a CI job needs:
 - run: npx @talkdedsec/tlk-truss check docs/architecture.truss --ci
 ```
 
-Add `--strict` to also flag nodes that carry no binding at all.
+Add `--strict` to also flag nodes that carry no binding at all, and `--uncovered` to turn the
+question around: which directories does no diagram claim? Several sources can be checked together,
+and the coverage is their union.
+
+```
+$ truss check docs/*.truss --root . --uncovered
+! /srv/shop  W401  no node claims "workers/"
+✓ every code binding resolves — 21/26 nodes bound to code
+```
 
 ## The drawing
 
