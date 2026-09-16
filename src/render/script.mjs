@@ -202,8 +202,12 @@ function paintPanel() {
         ? '<div class="form">' +
           field(t('label'), 'label', edge.label) +
           field(t('style'), 'style', edge.style, ['solid', 'async', 'both']) +
+          field(t('code'), 'code', edge.code) +
+          field(t('note'), 'note', edge.note) +
           '<div class="actions"><button data-act="drop">' + t('remove') + '</button></div></div>'
-        : '<dl>' + row(t('label'), escapeHtml(edge.label) || t('none')) + '</dl>');
+        : '<dl>' + row(t('label'), escapeHtml(edge.label) || t('none')) +
+          (edge.code ? row(t('code'), '<code>' + escapeHtml(edge.code) + '</code>') : '') +
+          (edge.note ? row(t('note'), escapeHtml(edge.note)) : '') + '</dl>');
     bindPanel(edge, 'edge');
     return;
   }

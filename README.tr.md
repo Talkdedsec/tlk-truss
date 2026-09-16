@@ -121,6 +121,15 @@ bir CI işinin ihtiyacı olan tek şey bu:
 - run: npx @talkdedsec/tlk-truss denetle docs/mimari.truss --ci
 ```
 
+Hazır bir action da var:
+
+```yaml
+- uses: Talkdedsec/tlk-truss@v0.1.0
+  with:
+    sources: docs/*.truss
+    uncovered: true
+```
+
 Hiç bağı olmayan düğümleri işaretlemek için `--kati`, soruyu tersine çevirmek için `--kapsanmayan`
 ekle: hangi dizini hiçbir diyagram sahiplenmiyor? Birden fazla kaynak birlikte denetlenebilir,
 kapsam hepsinin birleşimidir.

@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: '24'
       - name: our own diagrams must still match this repository
-        run: |
-          for source in examples/*.truss; do
-            node bin/truss.mjs check "$source" --root . --ci
-          done
+        uses: ./
+        with:
+          sources: examples/*.truss
+          root: .
