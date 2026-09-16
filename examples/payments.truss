@@ -1,0 +1,30 @@
+# tlk-truss example — the payment platform behind a storefront
+title  Payment Platform
+view   architecture
+theme  dark
+flow   down
+root   .
+
+group edge "Edge"
+group core "Core services"
+group data "Data"
+
+node web    "Storefront"     in=edge kind=client   code=src/**
+node cdn    "CDN"            in=edge kind=infra
+node api    "API Gateway"    in=core kind=service  code=src/cli.mjs
+node pay    "Payment"        in=core kind=service  code=src/commands/*.mjs
+node ledger "Ledger"         in=core kind=service  code=src/model.mjs
+node bus    "Event bus"      in=core kind=queue    code=src/layout/*.mjs
+node db     "Postgres"       in=data kind=store    code=package.json
+node bank   "Acquirer"               kind=external note="third party, no code of ours"
+
+web -> cdn  : assets
+web -> api  : REST
+cdn -> api
+api -> pay  : charge
+pay -> ledger : post entry
+pay ~> bus  : payment.captured
+bus ~> ledger
+ledger -> db
+pay -> bank : authorise
+bank ~> pay : webhook

@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolveLanguage, strings } from './i18n.mjs';
+import { draw } from './commands/draw.mjs';
+import { check } from './commands/check.mjs';
 
 const aliases = {
   draw: 'draw',
@@ -95,6 +97,19 @@ export function run(argv, io = console) {
     io.log(help(s));
     return 0;
   }
+
+  const options = {
+    source: positional[1],
+    out: typeof flags.out === 'string' ? flags.out : typeof flags.o === 'string' ? flags.o : '',
+    root: typeof flags.root === 'string' ? flags.root : typeof flags.kok === 'string' ? flags.kok : '',
+    lang,
+    json: Boolean(flags.json),
+    ci: Boolean(flags.ci),
+    strict: Boolean(flags.strict || flags.kati),
+  };
+
+  if (command === 'draw') return draw(options, io);
+  if (command === 'check') return check(options, io);
 
   io.error(s.notReady(command));
   return 2;
