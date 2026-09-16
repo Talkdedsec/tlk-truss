@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -11,14 +11,16 @@ function wait(ms) {
   return new Promise((done) => setTimeout(done, ms));
 }
 
-async function endpoint(port) {
-  for (let attempt = 0; attempt < 40; attempt += 1) {
+async function endpoint(profile) {
+  const stamp = join(profile, 'DevToolsActivePort');
+  for (let attempt = 0; attempt < 60; attempt += 1) {
     try {
+      const port = readFileSync(stamp, 'utf8').split('\n')[0].trim();
       const response = await fetch(`http://127.0.0.1:${port}/json/version`);
       const body = await response.json();
       if (body.webSocketDebuggerUrl) return body.webSocketDebuggerUrl;
     } catch {
-      await wait(150);
+      await wait(120);
     }
   }
   throw new Error('the browser never opened a debugging port');
@@ -62,7 +64,7 @@ class Session {
   }
 }
 
-export async function open(file, { port = 9333 } = {}) {
+export async function open(file) {
   const profile = mkdtempSync(join(tmpdir(), 'truss-browser-'));
   const child = spawn(
     edge,
@@ -71,7 +73,7 @@ export async function open(file, { port = 9333 } = {}) {
       '--disable-gpu',
       '--no-first-run',
       '--hide-scrollbars',
-      `--remote-debugging-port=${port}`,
+      '--remote-debugging-port=0',
       `--user-data-dir=${profile}`,
       '--window-size=1280,860',
       pathToFileURL(resolve(file)).href,
@@ -79,7 +81,7 @@ export async function open(file, { port = 9333 } = {}) {
     { stdio: 'ignore' },
   );
 
-  const socket = new WebSocket(await endpoint(port));
+  const socket = new WebSocket(await endpoint(profile));
   await new Promise((done, fail) => {
     socket.addEventListener('open', done, { once: true });
     socket.addEventListener('error', fail, { once: true });
