@@ -1,0 +1,17 @@
+# Where a click ends up, and what touches it on the way
+title  Click stream pipeline
+view   dataflow
+
+node app     "Web app"        kind=source     code=src/cli.mjs
+node collect "Collector"      kind=transform  code=src/parse.mjs
+node raw     "Raw bucket"     kind=store      code=examples/*.truss
+node enrich  "Enrichment"     kind=transform  code=src/model.mjs
+node warehouse "Warehouse"    kind=store      code=src/layout/*.mjs
+node report  "Daily report"   kind=sink       code=src/render/*.mjs
+
+app      -> collect   : click events
+collect  -> raw       : untouched copy
+collect  -> enrich    : validated batch
+enrich   -> warehouse : session rows
+warehouse -> report   : aggregate
+raw      ~> enrich    : replay

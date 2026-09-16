@@ -18,9 +18,9 @@ English: [README.md](README.md)
 
 ## Durum
 
-v0.1 sürüyor. Çekirdek çalışıyor ve test edildi: kaynak dili, mimari görünümü, ölçülü yerleşim
-motoru, tek dosyalık HTML çıktısı ve sapma kapısı. Sekans, veri akışı ve durum görünümleri, kanvas
-düzenleme ve Mermaid içe aktarma sırada.
+v0.1 sürüyor; özellikleri tamam ve test edildi: dört görünüm, ölçülü yerleşim motoru, tek dosyalık
+HTML çıktısı ve içindeki canlı düzenleme, sapma kapısı, dışa aktarıcılar ve Mermaid içe aktarma.
+Kalan iş paketleme — CI, yayınlanan demo ve npm sürümü.
 
 ## Kurulum
 
@@ -57,6 +57,7 @@ pay ~> bus : payment.captured
 pay -> bank : provizyon
 ```
 
+- `gorunum` şunlardan biri: `mimari`, `sekans`, `veriakisi`, `durum`
 - `->` çağrı, `~>` eşzamansız mesaj
 - Bağlantıdan sonra gelen `:` etiketi taşır
 - `tur=` şunlardan biri: `servis`, `depo`, `kuyruk`, `altyapi`, `istemci`, `dis`, `gorev`
@@ -66,12 +67,29 @@ pay -> bank : provizyon
 Her anahtar kelimenin İngilizce yazımı da geçerli (`title`, `group`, `node`, `in=`, `kind=`,
 `code=`); ikisi aynı dosyada karışık kullanılabilir.
 
+## Dört görünüm
+
+| `gorunum` | Ne çizer | Ne değişir |
+|---|---|---|
+| `mimari` | servisler, depolar, sınırlar | gruplu kutular, yukarıdan aşağı katmanlar |
+| `sekans` | tek bir akış, mesaj mesaj | yaşam çizgileri, kaynak sırasıyla mesajlar, kendine çağrı |
+| `veriakisi` | bir boru hattı | soldan sağa, kaynak ve havuz eğik çizilir |
+| `durum` | bir durum makinesi | hap kutular, başlangıç noktası, bitiş halkası, kendine geçiş döngüsü |
+
+İlk üçü tek yerleşim motorunu paylaşır, sekansın kendi motoru vardır. Bir durum kendini gösterebilir,
+sekansta aynı ikili iki kez konuşabilir — kurallar görünüme göre işler.
+
 ## Komutlar
 
 ```
-truss ciz     <kaynak.truss> [-o cikti.html]   tek dosyalık HTML diyagram çizer
-truss denetle <kaynak.truss> [--kok .]         her kod bağının çözüldüğünü doğrular
+truss ciz       <kaynak.truss> [-o cikti.html]   tek dosyalık HTML diyagram çizer
+truss denetle   <kaynak.truss> [--kok .]         her kod bağının çözüldüğünü doğrular
+truss disaaktar <kaynak.truss> --bicim svg|dot|mermaid|json
+truss iceaktar  <diyagram.mmd>                   Mermaid'i .truss kaynağına çevirir
 ```
+
+`iceaktar`, Mermaid `flowchart`, `sequenceDiagram` ve `stateDiagram` kaynaklarını okur; alt grafları,
+şekilleri, ok biçimlerini ve kenar etiketlerini korur ve depoya girebilecek bir kaynak yazar.
 
 İkisi de `--lang en|tr`, `--json` ve `--ci` alır. `denetle`, bir bağ çözülmediğinde 1 ile çıkar —
 bir CI işinin ihtiyacı olan tek şey bu:
@@ -87,6 +105,12 @@ Hiç bağı olmayan düğümleri de işaretlemek için `--kati` ekle.
 Tek HTML dosyası, ağ çağrısı yok, derleme adımı yok. Koyu ve açık tema, kaydırma ve yakınlaştırma,
 arama, her düğüm için bağını gösteren ayrıntı paneli, SVG/PNG dışa aktarma. "Güzel oldu" demez, ne
 yaptığını sayıyla söyler: düğüm, kenar, katman sayısı ve ölçülmüş kenar kesişmesi altta durur.
+
+Hiçbir şey donuk değil. **Düzenle**'ye bas, sayfa editöre dönüşür: düğümü yeniden adlandır, türünü,
+grubunu ya da kod bağını değiştir, düğüm ve bağlantı ekle ya da sil. Her değişiklikte motorun tamamı
+— sayfanın içinde duruyor — yeniden çalışır ve diyagram gözünün önünde yeniden yerleşir. **Kaynak**
+düğmesi `.truss` metnini canlı gösterir, yapıştırılanı geri alır ve dosyayı kaydeder. Ayrıştırılamayan
+bir değişiklik tanı koduyla reddedilir, çizime dokunulmaz.
 
 Yerleşim otomatiktir ve öyle kalır: döngüler kırılır, katmanlar atanır, sıralama medyan
 sezgiseliyle seçilir, kesişmeler Fenwick ağacıyla sayılır, koordinatlar düz çizgiye doğru gevşetilir

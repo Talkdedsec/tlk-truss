@@ -91,3 +91,55 @@ test('turkish diagnostics come back translated', () => {
   assert.match(result.err, /hiçbir şeyle eşleşmiyor/);
   rmSync(root, { recursive: true, force: true });
 });
+
+test('export writes a standalone svg that carries its own styles', () => {
+  const { root, source } = sample('node a "A"\nnode b "B"\na -> b : calls\n');
+  const result = capture(['export', source, '--to', 'svg', '-o', join(root, 'out.svg')]);
+  assert.equal(result.code, 0);
+  const svg = readFileSync(join(root, 'out.svg'), 'utf8');
+  assert.match(svg, /^<svg id="scene"/);
+  assert.match(svg, /<style>:root\{--canvas:/);
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('export speaks dot and mermaid', () => {
+  const { root, source } = sample('node a "A"\nnode b "B"\na ~> b : queued\n');
+  capture(['export', source, '--to', 'dot', '-o', join(root, 'g.dot')]);
+  capture(['disaaktar', source, '--bicim', 'mermaid', '-o', join(root, 'g.mmd')]);
+  assert.match(readFileSync(join(root, 'g.dot'), 'utf8'), /"a" -> "b" \[label="queued" style=dashed\]/);
+  assert.match(readFileSync(join(root, 'g.mmd'), 'utf8'), /a -\.->\|queued\| b/);
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('an unknown export format is refused with the list of known ones', () => {
+  const { root, source } = sample('node a "A"\nnode b "B"\na -> b\n');
+  const result = capture(['export', source, '--to', 'pdf']);
+  assert.equal(result.code, 2);
+  assert.match(result.err, /svg, dot, mermaid, json/);
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('import turns a mermaid flowchart into a source that draws', () => {
+  const root = mkdtempSync(join(tmpdir(), 'truss-mmd-'));
+  const mermaid = join(root, 'system.mmd');
+  writeFileSync(mermaid, 'flowchart LR\n  subgraph edge[Edge]\n    cdn[CDN]\n  end\n  api[API]\n  db[(Postgres)]\n  cdn -->|TLS| api\n  api -.-> db\n', 'utf8');
+
+  assert.equal(capture(['import', mermaid]).code, 0);
+  const text = readFileSync(join(root, 'system.truss'), 'utf8');
+  assert.match(text, /group edge "Edge"/);
+  assert.match(text, /node db "Postgres" kind=store/);
+  assert.match(text, /cdn -> api : TLS/);
+  assert.match(text, /api ~> db/);
+  assert.equal(capture(['draw', join(root, 'system.truss'), '-o', join(root, 'system.html')]).code, 0);
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('import refuses something that is not mermaid', () => {
+  const root = mkdtempSync(join(tmpdir(), 'truss-mmd-'));
+  const file = join(root, 'notes.md');
+  writeFileSync(file, '# just a heading\n', 'utf8');
+  const result = capture(['iceaktar', file, '--lang', 'tr']);
+  assert.equal(result.code, 1);
+  assert.match(result.err, /E500/);
+  rmSync(root, { recursive: true, force: true });
+});

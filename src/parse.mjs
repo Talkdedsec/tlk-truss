@@ -103,7 +103,7 @@ export function parse(source, { path = '<source>' } = {}) {
     title: '',
     view: 'architecture',
     theme: 'dark',
-    flow: 'down',
+    flow: '',
     root: '.',
     groups: [],
     nodes: [],
@@ -176,7 +176,7 @@ export function parse(source, { path = '<source>' } = {}) {
     }
     let label = '';
     let attrStart = 1;
-    if (rest[1] && rest[1].startsWith('"')) {
+    if (rest[1] && (rest[1].startsWith('"') || !rest[1].includes('='))) {
       label = unquote(rest[1]);
       attrStart = 2;
     }

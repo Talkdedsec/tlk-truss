@@ -29,6 +29,7 @@ const messages = {
     statBound: 'nodes bound to code',
     checkPassed: 'every code binding resolves',
     checkFailed: 'binding(s) no longer resolve',
+    unknownFormat: (list) => `Unknown format. Available: ${list}`,
   },
   tr: {
     tagline: 'Gerçek koda bağlı mimari diyagramlar.',
@@ -60,8 +61,38 @@ const messages = {
     statBound: 'düğüm koda bağlı',
     checkPassed: 'bütün kod bağları çözülüyor',
     checkFailed: 'bağ artık çözülmüyor',
+    unknownFormat: (list) => `Bilinmeyen biçim. Kullanılabilir: ${list}`,
   },
 };
+
+const statNames = {
+  nodes: { en: 'nodes', tr: 'düğüm' },
+  edges: { en: 'connections', tr: 'bağlantı' },
+  layers: { en: 'layers', tr: 'katman' },
+  crossings: { en: 'crossings', tr: 'kesişme' },
+  participants: { en: 'participants', tr: 'katılımcı' },
+  messages: { en: 'messages', tr: 'mesaj' },
+  states: { en: 'states', tr: 'durum' },
+  transitions: { en: 'transitions', tr: 'geçiş' },
+  stages: { en: 'stages', tr: 'aşama' },
+  bound: { en: 'bound to code', tr: 'koda bağlı' },
+};
+
+export const statLabels = statNames;
+
+export function statName(key, lang = 'en') {
+  const entry = statNames[key];
+  if (!entry) return key;
+  return entry[lang] ?? entry.en;
+}
+
+export function localiseSummary(summary) {
+  return summary.map((entry) => ({
+    value: entry.value,
+    en: statName(entry.key, 'en'),
+    tr: statName(entry.key, 'tr'),
+  }));
+}
 
 export const languages = Object.keys(messages);
 

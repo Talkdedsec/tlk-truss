@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 import { resolveLanguage, strings } from './i18n.mjs';
 import { draw } from './commands/draw.mjs';
 import { check } from './commands/check.mjs';
+import { exportDiagram } from './commands/export.mjs';
+import { importDiagram } from './commands/import.mjs';
 
 const aliases = {
   draw: 'draw',
@@ -106,10 +108,18 @@ export function run(argv, io = console) {
     json: Boolean(flags.json),
     ci: Boolean(flags.ci),
     strict: Boolean(flags.strict || flags.kati),
+    format:
+      typeof flags.to === 'string'
+        ? flags.to
+        : typeof flags.bicim === 'string'
+          ? flags.bicim
+          : 'svg',
   };
 
   if (command === 'draw') return draw(options, io);
   if (command === 'check') return check(options, io);
+  if (command === 'export') return exportDiagram(options, io);
+  if (command === 'import') return importDiagram(options, io);
 
   io.error(s.notReady(command));
   return 2;
