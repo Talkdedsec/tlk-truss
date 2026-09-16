@@ -3,6 +3,7 @@
 Gerçek koda bağlı mimari diyagramlar.
 
 [![ci](https://github.com/Talkdedsec/tlk-truss/actions/workflows/ci.yml/badge.svg)](https://github.com/Talkdedsec/tlk-truss/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/%40talkdedsec%2Ftlk-truss?color=4c9aff&label=npm)](https://www.npmjs.com/package/@talkdedsec/tlk-truss)
 
 Metinden diyagram üreten araçların hepsi resmi çiziyor. Hiçbiri resmin ne zaman yalan söylemeye
 başladığını söyleyemiyor. `truss` her düğümü depodaki bir yola bağlar ve o yol kaybolduğunda
