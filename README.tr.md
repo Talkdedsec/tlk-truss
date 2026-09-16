@@ -78,6 +78,8 @@ pay -> bank : provizyon
 - Bağlantıdan sonra gelen `:` etiketi taşır
 - `tur=` şunlardan biri: `servis`, `depo`, `kuyruk`, `altyapi`, `istemci`, `dis`, `gorev`
 - `kod=` bağdır: bir yol ya da glob; virgülle birden fazla verilebilir
+- `not=` bir düğüme, sekansta bir mesaja not iliştirir:
+  `api -> pay : "tahsilat" not="idempotent"`
 - `#` yorum satırı başlatır
 
 Her anahtar kelimenin İngilizce yazımı da geçerli (`title`, `group`, `node`, `in=`, `kind=`,
@@ -88,7 +90,7 @@ Her anahtar kelimenin İngilizce yazımı da geçerli (`title`, `group`, `node`,
 | `gorunum` | Ne çizer | Ne değişir |
 |---|---|---|
 | `mimari` | servisler, depolar, sınırlar | gruplu kutular, yukarıdan aşağı katmanlar |
-| `sekans` | tek bir akış, mesaj mesaj | yaşam çizgileri, kaynak sırasıyla mesajlar, kendine çağrı |
+| `sekans` | tek bir akış, mesaj mesaj | yaşam çizgileri, etkinleşme çubukları, notlar, kendine çağrı |
 | `veriakisi` | bir boru hattı | soldan sağa, kaynak ve havuz eğik çizilir |
 | `durum` | bir durum makinesi | hap kutular, başlangıç noktası, bitiş halkası, kendine geçiş döngüsü |
 
@@ -119,7 +121,15 @@ bir CI işinin ihtiyacı olan tek şey bu:
 - run: npx @talkdedsec/tlk-truss denetle docs/mimari.truss --ci
 ```
 
-Hiç bağı olmayan düğümleri de işaretlemek için `--kati` ekle.
+Hiç bağı olmayan düğümleri işaretlemek için `--kati`, soruyu tersine çevirmek için `--kapsanmayan`
+ekle: hangi dizini hiçbir diyagram sahiplenmiyor? Birden fazla kaynak birlikte denetlenebilir,
+kapsam hepsinin birleşimidir.
+
+```
+$ truss denetle docs/*.truss --kok . --kapsanmayan
+! /srv/shop  W401  "workers/" yolunu hiçbir düğüm sahiplenmiyor
+✓ bütün kod bağları çözülüyor — 21/26 düğüm koda bağlı
+```
 
 ## Çizim
 

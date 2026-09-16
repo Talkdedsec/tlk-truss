@@ -48,7 +48,19 @@ function patternsOf(node) {
     .filter(Boolean);
 }
 
-export function check(model, { root = '.', strict = false } = {}) {
+function territory(root) {
+  let entries;
+  try {
+    entries = readdirSync(root, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  return entries
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.') && !skipped.has(entry.name))
+    .map((entry) => `${entry.name}/`);
+}
+
+export function check(model, { root = '.', strict = false, uncovered = false } = {}) {
   const bound = model.nodes.filter((node) => node.code);
   const diagnostics = [];
   const bindings = [];
@@ -71,6 +83,24 @@ export function check(model, { root = '.', strict = false } = {}) {
       if (count === 0) {
         diagnostics.push({ code: 'E400', line: node.line, token: node.id, hint: pattern });
       }
+    }
+  }
+
+  if (uncovered) {
+    const patterns = bound.flatMap((node) => patternsOf(node));
+    const expressions = patterns.map((pattern) =>
+      toRegExp(pattern.endsWith('/') ? pattern.slice(0, -1) : pattern),
+    );
+    const everything = paths.length ? paths : walk(root);
+    for (const place of territory(root)) {
+      const prefix = place.endsWith('/') ? place : `${place}`;
+      const inside = everything.filter(
+        (path) => path === place.replace(/\/$/, '') || path.startsWith(prefix),
+      );
+      const claimed = inside.some((path) =>
+        expressions.some((expression) => expression.test(path.replace(/\/$/, ''))),
+      );
+      if (!claimed) diagnostics.push({ code: 'W401', line: 0, where: root, token: place });
     }
   }
 

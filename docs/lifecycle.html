@@ -50,6 +50,9 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }
 .lifeline { stroke: var(--line); stroke-dasharray: 4 6; }
 .message-label { fill: var(--text); font-size: 11.5px; }
+.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }
+.note path { fill: var(--raised); stroke: var(--line); }
+.note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }
 .pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
 
@@ -203,7 +206,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 </main>
 <footer id="stats"></footer>
 </div>
-<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"order-lifecycle","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Order lifecycle\nview   lifecycle\n\nnode new \"Placed\" kind=start code=src/parse.mjs\nnode paid \"Paid\" kind=state code=src/model.mjs\nnode packing \"Packing\" kind=state code=src/layout/index.mjs\nnode shipped \"Shipped\" kind=state code=src/render/page.mjs\nnode delivered \"Delivered\" kind=terminal\nnode refused \"Refused\" kind=failure code=src/check.mjs\n\nnew -> paid : payment captured\npaid -> packing : stock reserved\npacking -> packing : item repicked\npacking -> shipped : handed to courier\nshipped -> delivered : signed for\nshipped -> refused : recipient refused\nrefused -> paid : returned to stock\n"};</script>
+<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"order-lifecycle","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Order lifecycle\nview   lifecycle\n\nnode new \"Placed\" kind=start code=src/parse.mjs\nnode paid \"Paid\" kind=state code=src/model.mjs\nnode packing \"Packing\" kind=state code=src/layout/index.mjs\nnode shipped \"Shipped\" kind=state code=src/render/page.mjs\nnode delivered \"Delivered\" kind=terminal\nnode refused \"Refused\" kind=failure code=src/check.mjs\n\nnew -> paid : payment captured\npaid -> packing : stock reserved\npacking -> packing : item repicked\npacking -> shipped : handed to courier\nshipped -> delivered : signed for\nshipped -> refused : recipient refused\nrefused -> paid : returned to stock\n"};</script>
 <script>window.__trussEngine = (function () {
 const directives = new Map([
   ['title', 'title'],
@@ -553,6 +556,7 @@ function build(spec) {
       to: entry.to,
       label: entry.label ?? '',
       style: entry.style ?? 'solid',
+      note: entry.note ?? '',
       line: entry.line,
     });
   }
@@ -611,7 +615,12 @@ function toSource(model) {
 
   for (const edge of model.edges) {
     const arrow = arrowFor[edge.style] ?? '->';
-    lines.push(`${edge.from} ${arrow} ${edge.to}${edge.label ? ` : ${edge.label}` : ''}`);
+    const tail = edge.note
+      ? ` : ${quote(edge.label)} note=${quote(edge.note)}`
+      : edge.label
+        ? ` : ${edge.label}`
+        : '';
+    lines.push(`${edge.from} ${arrow} ${edge.to}${tail}`);
   }
   return `${lines.join('\n')}\n`;
 }
@@ -944,6 +953,7 @@ function place(layers, links, sizes, { passes = 6 } = {}) {
 
 
 const sequenceMetrics = {
+  barWidth: 11,
   headHeight: 52,
   headGap: 56,
   firstMessage: 46,
@@ -978,6 +988,7 @@ function layoutSequence(model) {
       from: edge.from,
       to: edge.to,
       label: edge.label,
+      note: edge.note ?? '',
       style: edge.style,
       self,
       y: depth,
@@ -992,17 +1003,59 @@ function layoutSequence(model) {
     return message;
   });
 
+  const bars = [];
+  const open = [];
+  for (const message of messages) {
+    if (message.self || message.style !== 'solid') continue;
+    const top = open[open.length - 1];
+    if (top && top.participant === message.from && top.caller === message.to) {
+      top.end = message.y;
+      bars.push(open.pop());
+      continue;
+    }
+    open.push({
+      participant: message.to,
+      caller: message.from,
+      start: message.y,
+      end: 0,
+      depth: open.filter((entry) => entry.participant === message.to).length,
+    });
+  }
+
   const lifelineEnd = depth + sequenceMetrics.messageGap / 2;
+  for (const bar of open) {
+    bar.end = lifelineEnd;
+    bars.push(bar);
+  }
+  for (const bar of bars) {
+    const lane = laneOf.get(bar.participant);
+    bar.x = lane.centre - sequenceMetrics.barWidth / 2 + bar.depth * 5;
+    bar.y = bar.start;
+    bar.h = Math.max(sequenceMetrics.barWidth, bar.end - bar.start);
+  }
+
+  const rail = Math.max(...lanes.map((lane) => lane.x + lane.w)) + sequenceMetrics.noteGap;
+  const notes = messages
+    .filter((message) => message.note)
+    .map((message) => ({
+      text: message.note,
+      x: rail,
+      y: message.y + (message.self ? message.drop / 2 : 0),
+      index: message.index,
+    }));
   const width =
     Math.max(
       cursor - sequenceMetrics.headGap,
       ...messages.map((message) => message.reach + sequenceMetrics.margin),
+      ...notes.map((note) => note.x + note.text.length * 6.4 + 28),
     ) + sequenceMetrics.margin;
 
   return {
     kind: 'sequence',
     lanes,
     messages,
+    bars,
+    notes,
     lifelineEnd,
     width: Math.round(width),
     height: Math.round(lifelineEnd + sequenceMetrics.margin),
@@ -1557,6 +1610,15 @@ function renderSequence(diagram) {
   }
   parts.push('</g>');
 
+  parts.push('<g class="bars">');
+  for (const bar of diagram.bars) {
+    parts.push(
+      `<rect class="bar" data-id="${escapeXml(bar.participant)}" x="${bar.x.toFixed(1)}" ` +
+        `y="${bar.y.toFixed(1)}" width="11" height="${bar.h.toFixed(1)}" rx="2"/>`,
+    );
+  }
+  parts.push('</g>');
+
   parts.push('<g class="messages">');
   for (const message of diagram.messages) {
     const classes = ['edge', message.style === 'async' ? 'async' : '']
@@ -1593,6 +1655,18 @@ function renderSequence(diagram) {
       );
     }
     parts.push('</g>');
+  }
+  parts.push('</g>');
+
+  parts.push('<g class="notes">');
+  for (const note of diagram.notes) {
+    const text = trim(note.text, 44);
+    const width = text.length * 6.3 + 22;
+    parts.push(
+      `<g class="note" transform="translate(${note.x.toFixed(1)} ${note.y.toFixed(1)})">` +
+        `<path d="M 0 -13 H ${(width - 9).toFixed(1)} L ${width.toFixed(1)} -4 V 13 H 0 Z"/>` +
+        `<text x="11" y="4">${escapeXml(text)}</text></g>`,
+    );
   }
   parts.push('</g>');
 

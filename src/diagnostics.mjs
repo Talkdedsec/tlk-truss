@@ -79,6 +79,10 @@ const catalog = {
     en: ({ token }) => `"${token}" is declared but never connected`,
     tr: ({ token }) => `"${token}" bildirilmiş ama hiçbir yere bağlanmamış`,
   },
+  W401: {
+    en: ({ token }) => `no node claims "${token}"`,
+    tr: ({ token }) => `"${token}" yolunu hiçbir düğüm sahiplenmiyor`,
+  },
   W400: {
     en: ({ token }) => `"${token}" carries no code binding`,
     tr: ({ token }) => `"${token}" düğümünün kod bağı yok`,
@@ -96,7 +100,8 @@ export function describe(diagnostic, lang = 'en') {
 }
 
 export function format(diagnostic, { lang = 'en', path = '' } = {}) {
-  const where = diagnostic.line ? `${path}:${diagnostic.line}` : path;
+  const base = diagnostic.where ?? path;
+  const where = diagnostic.line ? `${base}:${diagnostic.line}` : base;
   const mark = isError(diagnostic.code) ? '✗' : '!';
   return `${mark} ${where}  ${diagnostic.code}  ${describe(diagnostic, lang)}`;
 }

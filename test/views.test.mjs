@@ -97,3 +97,42 @@ test('the Turkish names for the views resolve to the same thing', () => {
   assert.equal(compile('gorunum durum\nnode a "A"\nnode b "B"\na -> b').model.view, 'lifecycle');
   assert.equal(compile('gorunum veriakisi\nnode a "A"\nnode b "B"\na -> b').model.view, 'dataflow');
 });
+
+test('activation bars nest the way the calls nest', () => {
+  const { diagram } = compile(`
+view sequence
+node a "A"
+node b "B"
+node c "C"
+a -> b : call
+b -> c : deeper
+c -> b : back
+b -> a : done
+`);
+  const outer = diagram.bars.find((bar) => bar.participant === 'b');
+  const inner = diagram.bars.find((bar) => bar.participant === 'c');
+  assert.ok(outer.y < inner.y, 'the outer call starts first');
+  assert.ok(outer.y + outer.h > inner.y + inner.h, 'and ends last');
+  assert.equal(diagram.bars.length, 2);
+});
+
+test('a call that never returns stays active to the end of the lifeline', () => {
+  const { diagram } = compile('view sequence\nnode a "A"\nnode b "B"\na -> b : fire');
+  assert.equal(diagram.bars.length, 1);
+  assert.equal(diagram.bars[0].y + diagram.bars[0].h, diagram.lifelineEnd);
+});
+
+test('an asynchronous message activates nobody', () => {
+  const { diagram } = compile('view sequence\nnode a "A"\nnode q "Q"\na ~> q : published');
+  assert.equal(diagram.bars.length, 0);
+});
+
+test('a note on a message is drawn clear of every lifeline', () => {
+  const { diagram, model } = compile(
+    'view sequence\nnode a "A"\nnode b "B"\na -> b : "charge" note="idempotent"',
+  );
+  assert.equal(diagram.notes.length, 1);
+  const rightmost = Math.max(...diagram.lanes.map((lane) => lane.x + lane.w));
+  assert.ok(diagram.notes[0].x > rightmost);
+  assert.match(renderDiagram(diagram, model), /class="note"/);
+});

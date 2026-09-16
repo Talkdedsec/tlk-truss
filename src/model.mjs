@@ -130,6 +130,7 @@ export function build(spec) {
       to: entry.to,
       label: entry.label ?? '',
       style: entry.style ?? 'solid',
+      note: entry.note ?? '',
       line: entry.line,
     });
   }
