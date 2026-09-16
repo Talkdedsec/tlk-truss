@@ -12,7 +12,7 @@ The rules that matter here:
   positioning attribute in the source language.
 - **Claims come with numbers.** "Cleaner layout" is not a result; a lower measured crossing count is.
 
-Run `npm test` before you push. `npm run test:browser` drives the generated page in a real browser
+Run `npm test` before you push, and `npm run publish:check` before a release. `npm run test:browser` drives the generated page in a real browser
 and needs Edge or Chrome; set `TRUSS_BROWSER` if yours lives somewhere unusual.
 
 New top-level names must be unique across `src/`: the engine is concatenated into one scope when it
@@ -31,7 +31,7 @@ Burada önemli olan kurallar:
 - **İddia sayıyla gelir.** "Yerleşim iyileşti" sonuç değildir; ölçülmüş kesişme sayısının düşmesi
   sonuçtur.
 
-Göndermeden önce `npm test` çalıştır. `npm run test:browser` üretilen sayfayı gerçek tarayıcıda
+Göndermeden önce `npm test`, sürüm çıkarmadan önce `npm run publish:check` çalıştır. `npm run test:browser` üretilen sayfayı gerçek tarayıcıda
 sürer, Edge ya da Chrome ister; başka yerdeyse `TRUSS_BROWSER` ile yolunu ver.
 
 Yeni üst düzey isimler `src/` genelinde eşsiz olmalı: motor sayfaya gömülürken tek kapsamda
