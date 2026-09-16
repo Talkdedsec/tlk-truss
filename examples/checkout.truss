@@ -1,0 +1,21 @@
+# A single checkout, told as the calls it actually makes
+title  Checkout call sequence
+view   sequence
+
+node shopper "Shopper"      kind=client
+node web     "Storefront"   kind=service  code=src/cli.mjs
+node api     "API Gateway"  kind=service  code=src/commands/*.mjs
+node pay     "Payment"      kind=service  code=src/check.mjs
+node bank    "Acquirer"     kind=external
+node bus     "Event bus"    kind=queue    code=src/layout/*.mjs
+
+shopper -> web  : submits the basket
+web     -> api  : POST /orders
+api     -> api  : validate the basket
+api     -> pay  : authorise 49.90 EUR
+pay     -> bank : card authorisation
+bank    -> pay  : approved
+pay     ~> bus  : payment.captured
+pay     -> api  : receipt
+api     -> web  : 201 Created
+web     -> shopper : order confirmed

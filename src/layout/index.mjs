@@ -1,6 +1,7 @@
 import { breakCycles, assignLayers, insertVirtualNodes } from './rank.mjs';
 import { orderLayers, countCrossings } from './order.mjs';
 import { place, measure, metrics } from './place.mjs';
+import { layoutSequence } from './sequence.mjs';
 
 function chainLinks(segments) {
   const links = [];
@@ -74,7 +75,14 @@ function pushOutsiders(model, boxOf, horizontal) {
 }
 
 export function layout(model) {
-  const { acyclic, reversedCount } = breakCycles(model.nodes, model.edges);
+  if (model.view === 'sequence') return layoutSequence(model);
+  return layoutLayered(model);
+}
+
+function layoutLayered(model) {
+  const loops = model.edges.filter((edge) => edge.from === edge.to);
+  const linked = model.edges.filter((edge) => edge.from !== edge.to);
+  const { acyclic, reversedCount } = breakCycles(model.nodes, linked);
   const depthOf = assignLayers(model.nodes, acyclic);
   const { segments, virtual } = insertVirtualNodes(acyclic, depthOf);
 
@@ -131,6 +139,21 @@ export function layout(model) {
     return { ...group, x: left, y: top, w: right - left, h: bottom - top };
   });
 
+  const loopGeometry = loops.map((edge) => {
+    const box = boxOf.get(edge.from);
+    const reach = 30;
+    return {
+      from: edge.from,
+      to: edge.to,
+      label: edge.label,
+      style: edge.style,
+      loop: horizontal
+        ? { x: box.x + box.w / 2, y: box.y, reach, side: 'top' }
+        : { x: box.x + box.w, y: box.y + box.h / 2, reach, side: 'right' },
+      points: [],
+    };
+  });
+
   const edges = segments.map(({ edge, chain }) => {
     const points = chain.map((id, index) => {
       const box = boxOf.get(id);
@@ -158,6 +181,8 @@ export function layout(model) {
     };
   });
 
+  edges.push(...loopGeometry);
+
   const drawn = [...nodes, ...groups];
   const points = edges.flatMap((edge) => edge.points);
   const left = Math.min(...drawn.map((box) => box.x), ...points.map((point) => point.x));
@@ -175,13 +200,25 @@ export function layout(model) {
     point.x += shiftX;
     point.y += shiftY;
   }
+  for (const edge of edges) {
+    if (!edge.loop) continue;
+    edge.loop.x += shiftX;
+    edge.loop.y += shiftY;
+  }
 
   return {
+    kind: 'layered',
     nodes,
     groups,
     edges,
     width: Math.round(right - left + metrics.margin * 2),
     height: Math.round(bottom - top + metrics.margin * 2),
+    summary: [
+      { key: model.view === 'lifecycle' ? 'states' : 'nodes', value: nodes.length },
+      { key: model.view === 'lifecycle' ? 'transitions' : 'edges', value: edges.length },
+      { key: model.view === 'lifecycle' ? 'stages' : 'layers', value: ordered.layers.length },
+      { key: 'crossings', value: ordered.crossings },
+    ],
     stats: {
       crossings: ordered.crossings,
       verified: countCrossings(ordered.layers, links),

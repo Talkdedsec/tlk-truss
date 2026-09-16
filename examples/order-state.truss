@@ -1,0 +1,18 @@
+# What an order can be, and what moves it
+title  Order lifecycle
+view   lifecycle
+
+node new       "Placed"     kind=start    code=src/parse.mjs
+node paid      "Paid"       kind=state    code=src/model.mjs
+node packing   "Packing"    kind=state    code=src/layout/index.mjs
+node shipped   "Shipped"    kind=state    code=src/render/page.mjs
+node delivered "Delivered"  kind=terminal
+node refused   "Refused"    kind=failure  code=src/check.mjs
+
+new     -> paid      : payment captured
+paid    -> packing   : stock reserved
+packing -> packing   : item repicked
+packing -> shipped   : handed to courier
+shipped -> delivered : signed for
+shipped -> refused   : recipient refused
+refused -> paid      : returned to stock

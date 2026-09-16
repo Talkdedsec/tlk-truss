@@ -15,7 +15,7 @@ CI kapısı**. Konumumuz burası.
 talk-graph'tan ayrı ürün: talk-graph mekanik grafı depodan çıkarır, truss insanın anlattığı hikâyeyi
 çizer ve o hikâyeyi koda mühürler. Ortak paket yok, motor bu projede yeniden yazıldı.
 
-## Bitti (v0.1 çekirdek)
+## Bitti (v0.1 — özellikler tamam)
 
 - **DSL** (`src/parse.mjs`): satır tabanlı, `title/flow/group/node` + `->` `~>` `<->`, `:` etiket,
   `key=value` öznitelik, `#` yorum. Her anahtar kelimenin Türkçe yazımı var, karışık kullanılabilir.
@@ -32,29 +32,48 @@ talk-graph'tan ayrı ürün: talk-graph mekanik grafı depodan çıkarır, truss
   node_modules/dist/target gibi dizinler taranmıyor.
 - **CLI**: `draw|ciz`, `check|denetle`, `--lang`, `--json`, `--ci`, `--out/-o`, `--root/--kok`,
   `--strict/--kati`. Bilinmeyen komut exit 2, kaynak hatası exit 1.
-- **38 test** (`node --test`), hepsi yeşil. Görsel doğrulama: `examples/payments.truss` headless Edge
-  ile ekran görüntüsü alınarak gözle kontrol edildi.
+- **Dört görünüm**: mimari, sekans (kendi yerleşimi: yaşam çizgisi + kaynak sırasıyla mesaj +
+  kendine çağrı), veriakisi (varsayılan soldan sağa, kaynak/havuz eğik çokgen), durum (hap kutu,
+  başlangıç noktası, bitiş halkası, kendine geçiş döngüsü). Kurallar görünüme göre: `W300`/`W301`
+  sekans ve durumda susar.
+- **Dışa aktarma** (`src/commands/export.mjs`): kendi stilini taşıyan standalone svg, dot, mermaid, json.
+- **Mermaid içe aktarma** (`src/mermaid.mjs`): flowchart / sequenceDiagram / stateDiagram → .truss;
+  subgraph, şekil, `-.->`, `|etiket|` korunur.
+- **Kanvasta düzenleme**: motorun tamamı sayfaya gömülü (`src/bundle.mjs` import/export'ları sıyırıp
+  tek IIFE üretiyor, ~45 KB). Düzenle modunda etiket/tür/grup/kod bağı/not değişir, düğüm ve bağlantı
+  eklenir-silinir, her değişiklikte **yeniden yerleşir**. Kaynak kutusu canlı `.truss` metnini gösterir,
+  yapıştırmayı kabul eder, dosyayı indirir. Ayrıştırılamayan değişiklik tanı koduyla reddedilir.
+- **Tarayıcı koşucusu** (`scripts/browser-check.mjs`): Edge'i CDP ile sürer (WebSocket + fetch,
+  bağımlılık yok); tıklama / JS değerlendirme / ekran görüntüsü + konsol hatası toplama.
+- **57 birim + 6 tarayıcı testi**, hepsi yeşil.
 
-Ölçüm (16 Eyl): örnek 8 düğüm / 10 kenar / 7 katman → **0 kesişme**, çıktı 22 KB tek dosya.
+Ölçüm (16 Eyl): örnek 8 düğüm / 10 kenar / 7 katman → **0 kesişme**; çıktı motorla birlikte 79 KB
+tek dosya (motorsuz 22 KB).
 
 ## Tuzaklar / kararlar
 
-- `node --test test/` Windows'ta patlıyor ("test" modülü sanıyor) → `node --test` (otomatik keşif).
 - SVG'ye hem `width/height` hem `viewBox` verip üstüne `transform` ile zoom yapmak çifte ölçek
   yaratıyordu; pan/zoom artık **viewBox** üstünden.
 - Grup kutusu üyesi olmayan düğümü yutuyordu → `pushOutsiders` pası (kutu aralığına giren yabancıyı
   dışarı it, sonra katmanda asgari boşluğu tazele).
 - `src/auth/**` dizinin kendisini saymaz, altındakileri sayar — test beklentisi buna göre.
-- Sayfa yükü `JSON.stringify` sonrası `<` → `<`; etiketten `</script>` kaçışı kapalı (testi var).
+- Sayfa yükünde `<` karakteri kaçırılıyor; etiketten `</script>` ile çıkış kapalı (testi var).
+- **Python heredoc'ta ters eğik çizgili kaçış yazma**: kabuk katmanı onu yiyip dosyaya gerçek NUL
+  bastı, grep dosyayı ikili sandı. Ayraç gerekiyorsa `JSON.stringify([...])`, sanal düğüm öneki `#v`.
+  Aynı tuzak Python'un kendi kaynağında da patlar; düzenleme script'lerinde r-string kullan.
+- Paket motoru tek kapsamda birleştiği için **isim çakışması** patlatıyor (`arrows` iki dosyadaydı
+  → `arrowFor`). Yeni modül eklerken üst düzey isimleri eşsiz tut.
+- `node --test test/` Windows'ta "test" modülü sanıyor; `npm test` → `node --test test/*.test.mjs`,
+  tarayıcı testi ayrı (`npm run test:browser`) çünkü Edge şart.
 
 ## Sıradaki
 
-1. Sekans görünümü (`view sequence`) — aynı kaynaktan, yaşam çizgisi + mesaj sırası.
-2. Veri akışı ve durum görünümleri.
-3. Kanvas düzenleme: tarayıcıda sürükle/yeniden adlandır → DSL'e geri yazma.
-4. Mermaid içe aktarma (`truss import`): flowchart/sequence/state → .truss.
-5. `truss export` (svg/png/dot/mermaid) CLI tarafı.
-6. GitHub: depo public, Pages demosu, CI (ubuntu+windows × node 20/22/24), npm yayını.
+1. GitHub: depo **public** aç, CI (ubuntu+windows × node 20/22/24), CodeQL, depo-standart dosyaları.
+2. Pages demosu: `docs/` altına örnek diyagramlar + anlatım sayfası.
+3. npm yayını `@talkdedsec/tlk-truss` (org kapsamı, 2FA passkey → gerçek konsol penceresi gerekir).
+4. README görselleri: dört görünümün ekran görüntüsü + düzenleme modu.
+5. `truss watch`: kaynak değişince HTML'i tazele.
+6. Kanvasta grup ekleme/silme (şu an düğüm ve bağlantı var, grup yalnız kaynaktan).
 
 ## Kırmızı çizgiler
 
