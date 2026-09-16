@@ -145,7 +145,7 @@ export function build(spec) {
       theme: spec.theme,
       flow: spec.flow || (kept === 'dataflow' ? 'right' : 'down'),
       root: spec.root,
-      groups: groups.filter((group) => group.members.length > 0),
+      groups,
       nodes,
       edges,
       nodeIndex,

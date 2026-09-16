@@ -116,3 +116,8 @@ test('crossing count matches a hand counted case', () => {
   ];
   assert.equal(countCrossings(layers, links), 1);
 });
+
+test('a group nobody joined is not drawn', () => {
+  const { diagram } = draw('group ghost "Ghost"\nnode a "A"\nnode b "B"\na -> b');
+  assert.equal(diagram.groups.length, 0);
+});

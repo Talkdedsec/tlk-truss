@@ -130,7 +130,9 @@ function layoutLayered(model) {
   pushOutsiders(model, boxOf, horizontal);
 
   const nodes = model.nodes.map((node) => ({ ...node, ...boxOf.get(node.id) }));
-  const groups = model.groups.map((group) => {
+  const groups = model.groups
+    .filter((group) => group.members.some((id) => boxOf.has(id)))
+    .map((group) => {
     const members = group.members.map((id) => boxOf.get(id)).filter(Boolean);
     const left = Math.min(...members.map((box) => box.x)) - metrics.groupPad;
     const top = Math.min(...members.map((box) => box.y)) - metrics.groupPad - metrics.groupHeader;

@@ -102,7 +102,12 @@ truss draw   <source.truss> [-o out.html]   render a single-file HTML diagram
 truss check  <source.truss> [--root .]      verify every code binding still resolves
 truss export <source.truss> --to svg|dot|mermaid|json
 truss import <diagram.mmd>                  convert Mermaid into a .truss source
+truss watch  <source.truss> [--serve]       redraw on every save
 ```
+
+`watch` rewrites the page whenever the source changes and prints the new numbers. With `--serve`
+it also puts the page on `127.0.0.1:4173` and reloads your browser on each save; the reload snippet
+lives only in the served copy, never in the file on disk.
 
 `import` reads Mermaid `flowchart`, `sequenceDiagram` and `stateDiagram` sources, keeps subgraphs,
 shapes, arrow styles and edge labels, and writes a source you can check into the repository.
@@ -124,7 +129,7 @@ claiming it looks good: node count, connection count, layer count and the measur
 crossings sit in the footer.
 
 Nothing is frozen. Press **Edit** and the page becomes an editor: rename a node, change its kind,
-group or code binding, add or remove nodes and connections. Every change re-runs the whole engine —
+group or code binding, add or remove nodes, connections and groups. Every change re-runs the whole engine —
 which ships inside the page — and the diagram is laid out again in front of you. **Source** shows
 the `.truss` text as you edit, takes a paste back, and saves the file. A change that would not
 parse is refused with its diagnostic code and the drawing is left alone.

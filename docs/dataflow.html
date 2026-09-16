@@ -30,6 +30,8 @@ main { position: relative; flex: 1; overflow: hidden;
 svg { touch-action: none; }
 
 .group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }
+body.editing .group rect { cursor: pointer; }
+body.editing .group rect:hover { stroke: var(--line-strong); }
 .group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .node .body { fill: var(--surface); stroke: var(--line); }
 .node polygon.body { fill: var(--surface); stroke: var(--line); }
@@ -96,6 +98,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
   <button id="zoomIn" title="+">+</button>
   <button id="edit"></button>
   <button id="addNode" hidden></button>
+  <button id="addGroup" hidden></button>
   <button id="sourceButton" hidden></button>
   <span class="spacer"></span>
   <button id="svgOut">SVG</button>
@@ -190,7 +193,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 </main>
 <footer id="stats"></footer>
 </div>
-<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"click-stream-pipeline","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Click stream pipeline\nview   dataflow\n\nnode app \"Web app\" kind=source code=src/cli.mjs\nnode collect \"Collector\" kind=transform code=src/parse.mjs\nnode raw \"Raw bucket\" kind=store code=examples/*.truss\nnode enrich \"Enrichment\" kind=transform code=src/model.mjs\nnode warehouse \"Warehouse\" kind=store code=src/layout/*.mjs\nnode report \"Daily report\" kind=sink code=src/render/*.mjs\n\napp -> collect : click events\ncollect -> raw : untouched copy\ncollect -> enrich : validated batch\nenrich -> warehouse : session rows\nwarehouse -> report : aggregate\nraw ~> enrich : replay\n"};</script>
+<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"click-stream-pipeline","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Click stream pipeline\nview   dataflow\n\nnode app \"Web app\" kind=source code=src/cli.mjs\nnode collect \"Collector\" kind=transform code=src/parse.mjs\nnode raw \"Raw bucket\" kind=store code=examples/*.truss\nnode enrich \"Enrichment\" kind=transform code=src/model.mjs\nnode warehouse \"Warehouse\" kind=store code=src/layout/*.mjs\nnode report \"Daily report\" kind=sink code=src/render/*.mjs\n\napp -> collect : click events\ncollect -> raw : untouched copy\ncollect -> enrich : validated batch\nenrich -> warehouse : session rows\nwarehouse -> report : aggregate\nraw ~> enrich : replay\n"};</script>
 <script>window.__trussEngine = (function () {
 const directives = new Map([
   ['title', 'title'],
@@ -555,7 +558,7 @@ function build(spec) {
       theme: spec.theme,
       flow: spec.flow || (kept === 'dataflow' ? 'right' : 'down'),
       root: spec.root,
-      groups: groups.filter((group) => group.members.length > 0),
+      groups,
       nodes,
       edges,
       nodeIndex,
@@ -1136,7 +1139,9 @@ function layoutLayered(model) {
   pushOutsiders(model, boxOf, horizontal);
 
   const nodes = model.nodes.map((node) => ({ ...node, ...boxOf.get(node.id) }));
-  const groups = model.groups.map((group) => {
+  const groups = model.groups
+    .filter((group) => group.members.some((id) => boxOf.has(id)))
+    .map((group) => {
     const members = group.members.map((id) => boxOf.get(id)).filter(Boolean);
     const left = Math.min(...members.map((box) => box.x)) - metrics.groupPad;
     const top = Math.min(...members.map((box) => box.y)) - metrics.groupPad - metrics.groupHeader;
@@ -1742,6 +1747,17 @@ function bindScene() {
     });
   }
 
+  const boxes = svg.querySelectorAll('.group');
+  for (let i = 0; i < boxes.length; i += 1) {
+    const element = boxes[i];
+    element.addEventListener('click', function (event) {
+      if (!editing) return;
+      event.stopPropagation();
+      selection = { type: 'group', id: element.dataset.group };
+      paintPanel();
+    });
+  }
+
   const edges = svg.querySelectorAll('.edge');
   for (let i = 0; i < edges.length; i += 1) {
     const element = edges[i];
@@ -1811,6 +1827,21 @@ function paintPanel() {
     return;
   }
 
+  if (selection.type === 'group') {
+    const group = model.groups.filter(function (entry) { return entry.id === selection.id; })[0];
+    if (!group) { selection = null; panel.classList.remove('open'); return; }
+    const members = model.nodes.filter(function (node) { return node.group === group.id; });
+    panel.innerHTML =
+      '<h2>' + escapeHtml(group.label) + '</h2><div class="muted">' + escapeHtml(group.id) + '</div>' +
+      (editing
+        ? '<div class="form">' + field(t('labelField'), 'label', group.label) +
+          '<div class="actions"><button data-act="drop">' + t('remove') + '</button></div></div>'
+        : '') +
+      '<dl>' + row(t('members'), members.length ? escapeHtml(members.map(function (node) { return node.id; }).join(', ')) : t('none')) + '</dl>';
+    bindPanel(group, 'group');
+    return;
+  }
+
   const node = model.nodeIndex.get(selection.id);
   if (!node) { selection = null; panel.classList.remove('open'); return; }
   const inbound = model.edges.filter(function (e) { return e.to === node.id; }).map(function (e) { return e.from; });
@@ -1864,7 +1895,12 @@ function bindPanel(target, type) {
         button.textContent = t('pickTarget');
         return;
       }
-      if (type === 'node') {
+      if (type === 'group') {
+        for (const node of model.nodes) {
+          if (node.group === target.id) node.group = '';
+        }
+        model.groups = model.groups.filter(function (entry) { return entry.id !== target.id; });
+      } else if (type === 'node') {
         model.nodes = model.nodes.filter(function (entry) { return entry.id !== target.id; });
         model.edges = model.edges.filter(function (entry) {
           return entry.from !== target.id && entry.to !== target.id;
@@ -1925,6 +1961,8 @@ function paintChrome() {
   document.getElementById('sourceButton').textContent = t('source');
   document.getElementById('addNode').textContent = t('addNode');
   document.getElementById('addNode').hidden = !editing;
+  document.getElementById('addGroup').textContent = t('addGroup');
+  document.getElementById('addGroup').hidden = !editing;
   document.getElementById('sourceButton').hidden = !editing;
   paintFooter();
 }
@@ -1969,6 +2007,21 @@ document.getElementById('addNode').addEventListener('click', function () {
   }
   commit();
   selection = { type: 'node', id: id };
+  paintPanel();
+});
+
+document.getElementById('addGroup').addEventListener('click', function () {
+  let index = model.groups.length + 1;
+  const taken = {};
+  for (const group of model.groups) taken[group.id] = true;
+  while (taken['g' + index]) index += 1;
+  const id = 'g' + index;
+  model.groups.push({ id: id, label: t('newGroup'), members: [] });
+  if (selection && selection.type === 'node') {
+    model.nodeIndex.get(selection.id).group = id;
+  }
+  commit();
+  selection = { type: 'group', id: id };
   paintPanel();
 });
 
