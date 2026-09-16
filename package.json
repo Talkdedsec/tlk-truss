@@ -24,7 +24,8 @@
     "test:browser": "node --test test-browser/page.mjs",
     "test:all": "npm test && npm run test:browser",
     "build:docs": "node scripts/build-docs.mjs",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "publish:check": "node scripts/publish-check.mjs"
   },
   "keywords": [
     "architecture",
