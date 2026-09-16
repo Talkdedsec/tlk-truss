@@ -1,18 +1,7 @@
 import { accentOf } from './theme.mjs';
+import { escapeXml, trim, openSvg, closeSvg } from './shared.mjs';
 
 const corner = 13;
-
-export function escapeXml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function trim(text, limit) {
-  return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
-}
 
 function waypoints(points, horizontal) {
   const path = [points[0]];
@@ -96,15 +85,37 @@ function placeLabels(labels, horizontal) {
   }
 }
 
-export function renderSvg(diagram, { horizontal = false } = {}) {
-  const parts = [];
-  parts.push(
-    `<svg id="scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${diagram.width} ${diagram.height}" width="${diagram.width}" height="${diagram.height}" role="img">`,
-  );
-  parts.push(
-    '<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--line-strong)"/></marker></defs>',
-  );
-  parts.push('<g class="viewport">');
+function bodyOf(node, view) {
+  if (view === 'lifecycle') {
+    const radius = node.h / 2;
+    return `<rect class="body" width="${node.w}" height="${node.h}" rx="${radius}"/>`;
+  }
+  if (view === 'dataflow' && (node.kind === 'source' || node.kind === 'sink')) {
+    const lean = 14;
+    const points =
+      node.kind === 'source'
+        ? `${lean},0 ${node.w},0 ${node.w - lean},${node.h} 0,${node.h}`
+        : `0,0 ${node.w - lean},0 ${node.w},${node.h} ${lean},${node.h}`;
+    return `<polygon class="body slanted" points="${points}"/>`;
+  }
+  return `<rect class="body" width="${node.w}" height="${node.h}" rx="12"/>`;
+}
+
+function markerOf(node) {
+  if (node.kind === 'start') {
+    return `<circle class="pip" cx="${node.w - 16}" cy="${node.h / 2}" r="5"/>`;
+  }
+  if (node.kind === 'terminal') {
+    return (
+      `<circle class="pip ring" cx="${node.w - 16}" cy="${node.h / 2}" r="7"/>` +
+      `<circle class="pip" cx="${node.w - 16}" cy="${node.h / 2}" r="3.5"/>`
+    );
+  }
+  return '';
+}
+
+export function renderSvg(diagram, { horizontal = false, view = 'architecture' } = {}) {
+  const parts = [openSvg(diagram)];
 
   parts.push('<g class="groups">');
   for (const group of diagram.groups) {
@@ -118,6 +129,24 @@ export function renderSvg(diagram, { horizontal = false } = {}) {
   parts.push('</g>');
 
   const drawnEdges = diagram.edges.map((edge) => {
+    if (edge.loop) {
+      const { x, y, reach, side } = edge.loop;
+      const path =
+        side === 'right'
+          ? `M ${x.toFixed(1)} ${(y - 12).toFixed(1)} H ${(x + reach).toFixed(1)} V ${(y + 12).toFixed(1)} H ${(x + 6).toFixed(1)}`
+          : `M ${(x - 12).toFixed(1)} ${y.toFixed(1)} V ${(y - reach).toFixed(1)} H ${(x + 12).toFixed(1)} V ${(y - 6).toFixed(1)}`;
+      const label = edge.label ? trim(edge.label, 24) : '';
+      return {
+        edge,
+        path,
+        label,
+        box: label
+          ? side === 'right'
+            ? { x: x + reach + 8, y: y - 10, w: label.length * 6.4 + 14, h: 20 }
+            : { x: x + 18, y: y - reach - 10, w: label.length * 6.4 + 14, h: 20 }
+          : null,
+      };
+    }
     const points = waypoints(edge.points, horizontal);
     const label = edge.label ? trim(edge.label, 28) : '';
     const anchor = label ? labelAnchor(points) : null;
@@ -159,21 +188,30 @@ export function renderSvg(diagram, { horizontal = false } = {}) {
   parts.push('<g class="nodes">');
   for (const node of diagram.nodes) {
     const accent = accentOf(node.kind);
-    const label = trim(node.label, Math.floor((node.w - 28) / 7.6));
+    const reserved = view === 'lifecycle' ? 52 : 28;
+    const label = trim(node.label, Math.floor((node.w - reserved) / 7.6));
     parts.push(
       `<g class="node" data-id="${escapeXml(node.id)}" tabindex="0" transform="translate(${node.x.toFixed(1)} ${node.y.toFixed(1)})">`,
     );
-    parts.push(`<rect class="body" width="${node.w}" height="${node.h}" rx="12"/>`);
-    parts.push(
-      `<rect class="accent" width="4" height="${node.h}" rx="2" fill="${accent}"/>`,
-    );
+    const slanted = view === 'dataflow' && (node.kind === 'source' || node.kind === 'sink');
+    parts.push(slanted ? bodyOf(node, view).replace('class="body slanted"', `class="body slanted" stroke="${accent}"`) : bodyOf(node, view));
+    if (slanted) {
+      parts.push('');
+    } else if (view === 'lifecycle') {
+      parts.push(
+        `<rect class="accent" x="6" y="${(node.h - 22) / 2}" width="4" height="22" rx="2" fill="${accent}"/>`,
+      );
+      parts.push(markerOf(node).replace('class="pip"', `class="pip" fill="${accent}"`));
+    } else {
+      parts.push(`<rect class="accent" width="4" height="${node.h}" rx="2" fill="${accent}"/>`);
+    }
     const hasCode = Boolean(node.code);
     parts.push(
-      `<text class="label" x="16" y="${hasCode ? 25 : 34}">${escapeXml(label)}</text>`,
+      `<text class="label" x="${view === 'lifecycle' ? 20 : 16}" y="${hasCode ? 25 : 34}">${escapeXml(label)}</text>`,
     );
     if (hasCode) {
       parts.push(
-        `<text class="code" x="16" y="42">${escapeXml(trim(node.code, Math.floor((node.w - 28) / 6)))}</text>`,
+        `<text class="code" x="${view === 'lifecycle' ? 20 : 16}" y="42">${escapeXml(trim(node.code, Math.floor((node.w - 28) / 6)))}</text>`,
       );
     }
     parts.push('</g>');

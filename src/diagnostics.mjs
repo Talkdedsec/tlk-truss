@@ -55,9 +55,17 @@ const catalog = {
     en: ({ token, hint }) => `unknown kind "${token}"; known kinds: ${hint}`,
     tr: ({ token, hint }) => `bilinmeyen tür "${token}"; bilinen türler: ${hint}`,
   },
+  E206: {
+    en: ({ token, hint }) => `unknown view "${token}"; known views: ${hint}`,
+    tr: ({ token, hint }) => `bilinmeyen görünüm "${token}"; bilinen görünümler: ${hint}`,
+  },
   E400: {
     en: ({ token, hint }) => `"${token}" is bound to ${hint}, which matches nothing`,
     tr: ({ token, hint }) => `"${token}" düğümü ${hint} yoluna bağlı, hiçbir şeyle eşleşmiyor`,
+  },
+  E500: {
+    en: () => 'this is not a Mermaid flowchart, sequenceDiagram or stateDiagram',
+    tr: () => 'bu bir Mermaid flowchart, sequenceDiagram ya da stateDiagram değil',
   },
   W300: {
     en: ({ token }) => `${token} is drawn more than once`,

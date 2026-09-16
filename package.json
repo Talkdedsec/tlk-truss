@@ -19,7 +19,9 @@
     "README.tr.md"
   ],
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/*.test.mjs",
+    "test:browser": "node --test test/page.browser.mjs",
+    "test:all": "node --test"
   },
   "keywords": [
     "architecture",

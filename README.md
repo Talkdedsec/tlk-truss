@@ -18,9 +18,9 @@ Turkish: [README.tr.md](README.tr.md)
 
 ## Status
 
-v0.1 work in progress. The core is working and tested: the source language, the architecture view,
-the measured layout engine, the single-file HTML output and the drift gate. Sequence, data-flow and
-state views, canvas editing and Mermaid import are next.
+v0.1 work in progress, feature complete and tested: four views, the measured layout engine, the
+single-file HTML output with live editing, the drift gate, exporters and Mermaid import. What is
+left is packaging — CI, the published demo and the npm release.
 
 ## Install
 
@@ -57,6 +57,7 @@ pay ~> bus : payment.captured
 pay -> bank : authorise
 ```
 
+- `view` is one of `architecture`, `sequence`, `dataflow`, `lifecycle`
 - `->` a call, `~>` an asynchronous message
 - `:` after a connection carries its label
 - `kind=` is one of `service`, `store`, `queue`, `infra`, `client`, `external`, `job`
@@ -66,12 +67,29 @@ pay -> bank : authorise
 Every keyword also has a Turkish spelling (`baslik`, `grup`, `dugum`, `icinde=`, `tur=`, `kod=`),
 and the two can be mixed in one file.
 
+## The four views
+
+| `view` | What it draws | What changes |
+|---|---|---|
+| `architecture` | services, stores, boundaries | grouped boxes, layered top to bottom |
+| `sequence` | one run, message by message | lifelines, messages in source order, self calls |
+| `dataflow` | a pipeline | left to right, sources and sinks drawn slanted |
+| `lifecycle` | a state machine | pills, a start dot, an end ring, self transitions as loops |
+
+The first three share one layout engine; the sequence view has its own. A state may point at
+itself, and in a sequence the same pair may talk twice — the rules follow the view.
+
 ## Commands
 
 ```
 truss draw   <source.truss> [-o out.html]   render a single-file HTML diagram
 truss check  <source.truss> [--root .]      verify every code binding still resolves
+truss export <source.truss> --to svg|dot|mermaid|json
+truss import <diagram.mmd>                  convert Mermaid into a .truss source
 ```
+
+`import` reads Mermaid `flowchart`, `sequenceDiagram` and `stateDiagram` sources, keeps subgraphs,
+shapes, arrow styles and edge labels, and writes a source you can check into the repository.
 
 Both take `--lang en|tr`, `--json` and `--ci`. `check` exits 1 when a binding no longer resolves,
 which is all a CI job needs:
@@ -88,6 +106,12 @@ One HTML file, no network calls, no build step. Dark and light themes, pan and z
 a detail panel per node showing its binding, and SVG/PNG export. It reports what it did rather than
 claiming it looks good: node count, connection count, layer count and the measured number of edge
 crossings sit in the footer.
+
+Nothing is frozen. Press **Edit** and the page becomes an editor: rename a node, change its kind,
+group or code binding, add or remove nodes and connections. Every change re-runs the whole engine —
+which ships inside the page — and the diagram is laid out again in front of you. **Source** shows
+the `.truss` text as you edit, takes a paste back, and saves the file. A change that would not
+parse is refused with its diagnostic code and the drawing is left alone.
 
 The layout is automatic and always is: cycles are broken, layers assigned, order chosen by the
 median heuristic, crossings counted with a Fenwick tree, coordinates relaxed towards straight lines,

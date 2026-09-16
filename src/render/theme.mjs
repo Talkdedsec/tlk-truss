@@ -27,6 +27,13 @@ export const accents = {
   client: '#2bc4d4',
   external: '#8b949e',
   job: '#e3b341',
+  source: '#3fb950',
+  transform: '#4c9aff',
+  sink: '#a371f7',
+  state: '#4c9aff',
+  start: '#3fb950',
+  terminal: '#8b949e',
+  failure: '#f85149',
 };
 
 export function accentOf(kind) {
