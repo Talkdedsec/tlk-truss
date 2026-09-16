@@ -32,8 +32,12 @@ export function toSource(model) {
 
   for (const edge of model.edges) {
     const arrow = arrowFor[edge.style] ?? '->';
-    const tail = edge.note
-      ? ` : ${quote(edge.label)} note=${quote(edge.note)}`
+    const attrs = [
+      edge.code ? `code=${edge.code}` : '',
+      edge.note ? `note=${quote(edge.note)}` : '',
+    ].filter(Boolean);
+    const tail = attrs.length
+      ? ` : ${quote(edge.label)} ${attrs.join(' ')}`
       : edge.label
         ? ` : ${edge.label}`
         : '';

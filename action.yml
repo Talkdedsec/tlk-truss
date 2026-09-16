@@ -1,0 +1,32 @@
+name: 'tlk-truss drift gate'
+description: 'Fail the build when a diagram no longer matches the code it claims.'
+branding:
+  icon: 'git-merge'
+  color: 'blue'
+inputs:
+  sources:
+    description: 'The .truss sources to check, space separated. Globs are expanded by the shell.'
+    required: false
+    default: 'docs/*.truss'
+  root:
+    description: 'The directory the bindings are resolved against.'
+    required: false
+    default: '.'
+  uncovered:
+    description: 'Also report directories that no diagram claims.'
+    required: false
+    default: 'false'
+  strict:
+    description: 'Also report nodes that carry no binding at all.'
+    required: false
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        flags=""
+        if [ "${{ inputs.uncovered }}" = "true" ]; then flags="$flags --uncovered"; fi
+        if [ "${{ inputs.strict }}" = "true" ]; then flags="$flags --strict"; fi
+        node "${{ github.action_path }}/bin/truss.mjs" check ${{ inputs.sources }} \
+          --root "${{ inputs.root }}" --ci $flags

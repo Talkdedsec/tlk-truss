@@ -41,8 +41,8 @@ export function walk(root, { limit = 60000 } = {}) {
   return found;
 }
 
-function patternsOf(node) {
-  return node.code
+function patternsOf(entry) {
+  return entry.code
     .split(',')
     .map((part) => part.trim())
     .filter(Boolean);
@@ -61,7 +61,11 @@ function territory(root) {
 }
 
 export function check(model, { root = '.', strict = false, uncovered = false } = {}) {
-  const bound = model.nodes.filter((node) => node.code);
+  const connections = (model.edges ?? []).filter((edge) => edge.code);
+  const bound = [
+    ...model.nodes.filter((node) => node.code),
+    ...connections.map((edge) => ({ ...edge, id: `${edge.from} → ${edge.to}` })),
+  ];
   const diagnostics = [];
   const bindings = [];
 
@@ -113,6 +117,9 @@ export function check(model, { root = '.', strict = false, uncovered = false } =
   return {
     diagnostics,
     bindings,
-    coverage: { bound: bound.length, total: model.nodes.length },
+    coverage: {
+      bound: bound.length,
+      total: model.nodes.length + connections.length,
+    },
   };
 }

@@ -119,3 +119,26 @@ test('a directory nobody drew is reported once, with the root as its place', () 
   assert.equal(result.diagnostics[0].where, root);
   rmSync(root, { recursive: true, force: true });
 });
+
+test('a connection can be bound to code, and the gate catches it too', () => {
+  const root = repo();
+  const model = compile(
+    'node a "A"\nnode b "B"\na -> b : "writes" code=src/index.ts\nnode c "C"\nb -> c : "reads" code=src/gone.ts',
+  );
+  const result = check(model, { root });
+  assert.equal(result.coverage.bound, 2);
+  assert.deepEqual(
+    result.diagnostics.map((entry) => [entry.code, entry.token]),
+    [['E400', 'b → c']],
+  );
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('a connection binding survives being written back out', async () => {
+  const { toSource } = await import('../src/source.mjs');
+  const first = compile('node a "A"\nnode b "B"\na -> b : "writes" code=src/db.ts note="batched"');
+  const second = compile(toSource(first));
+  assert.equal(second.edges[0].code, 'src/db.ts');
+  assert.equal(second.edges[0].note, 'batched');
+  assert.equal(second.edges[0].label, 'writes');
+});

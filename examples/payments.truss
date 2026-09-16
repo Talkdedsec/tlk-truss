@@ -25,6 +25,6 @@ api -> pay  : charge
 pay -> ledger : post entry
 pay ~> bus  : payment.captured
 bus ~> ledger
-ledger -> db
+ledger -> db : "writes entries" code=src/glob.mjs
 pay -> bank : authorise
 bank ~> pay : webhook

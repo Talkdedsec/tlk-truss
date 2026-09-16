@@ -14,7 +14,10 @@ export function check({ source, sources, root, lang, json, ci, strict, uncovered
 
   const loaded = files.map((file) => load(file));
   const base = resolve(root || loaded[0].model.root || dirname(loaded[0].path));
-  const united = { nodes: loaded.flatMap((entry) => entry.model.nodes) };
+  const united = {
+    nodes: loaded.flatMap((entry) => entry.model.nodes),
+    edges: loaded.flatMap((entry) => entry.model.edges),
+  };
   const result = inspect(united, { root: base, strict, uncovered });
   const all = [...loaded.flatMap((entry) => entry.diagnostics), ...result.diagnostics];
   const errors = countErrors(all);

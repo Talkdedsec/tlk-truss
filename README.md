@@ -121,6 +121,15 @@ which is all a CI job needs:
 - run: npx @talkdedsec/tlk-truss check docs/architecture.truss --ci
 ```
 
+There is an action for it as well:
+
+```yaml
+- uses: Talkdedsec/tlk-truss@v0.1.0
+  with:
+    sources: docs/*.truss
+    uncovered: true
+```
+
 Add `--strict` to also flag nodes that carry no binding at all, and `--uncovered` to turn the
 question around: which directories does no diagram claim? Several sources can be checked together,
 and the coverage is their union.
