@@ -1,0 +1,60 @@
+const messages = {
+  en: {
+    tagline: 'Architecture diagrams bound to real code.',
+    usage: 'Usage',
+    commands: 'Commands',
+    options: 'Options',
+    cmdDraw: 'render a .truss source into a single-file HTML diagram',
+    cmdCheck: 'verify every code binding still resolves; non-zero exit on drift',
+    cmdExport: 'write the diagram as svg, png, dot or mermaid',
+    cmdImport: 'convert a Mermaid source into a .truss source',
+    cmdHelp: 'show this help',
+    optOut: 'output path',
+    optLang: 'interface language (en, tr)',
+    optJson: 'machine-readable output',
+    optCi: 'terse output and a non-zero exit on the first failure',
+    optVersion: 'print the version',
+    notReady: (name) => `"${name}" is not implemented yet in this build.`,
+    unknownCommand: (name) => `Unknown command: ${name}`,
+    tryHelp: 'Run `truss help` to see the available commands.',
+    usageLine: '  truss <command> <source.truss> [options]',
+    phPath: '<path>',
+    phCode: '<code>',
+  },
+  tr: {
+    tagline: 'Gerçek koda bağlı mimari diyagramlar.',
+    usage: 'Kullanım',
+    commands: 'Komutlar',
+    options: 'Seçenekler',
+    cmdDraw: 'bir .truss kaynağını tek dosyalık HTML diyagrama çizer',
+    cmdCheck: 'her kod bağının hâlâ çözüldüğünü denetler; sapmada sıfırdan farklı çıkış kodu',
+    cmdExport: 'diyagramı svg, png, dot ya da mermaid olarak dışa aktarır',
+    cmdImport: 'bir Mermaid kaynağını .truss kaynağına çevirir',
+    cmdHelp: 'bu yardımı gösterir',
+    optOut: 'çıktı yolu',
+    optLang: 'arayüz dili (en, tr)',
+    optJson: 'makine okunur çıktı',
+    optCi: 'kısa çıktı ve ilk hatada sıfırdan farklı çıkış kodu',
+    optVersion: 'sürümü yazar',
+    notReady: (name) => `"${name}" bu sürümde henüz yok.`,
+    unknownCommand: (name) => `Bilinmeyen komut: ${name}`,
+    tryHelp: 'Komutları görmek için `truss help` çalıştır.',
+    usageLine: '  truss <komut> <kaynak.truss> [seçenekler]',
+    phPath: '<yol>',
+    phCode: '<kod>',
+  },
+};
+
+export const languages = Object.keys(messages);
+
+export function resolveLanguage(explicit, env = process.env) {
+  const wanted = explicit || env.TRUSS_LANG || env.TRUSS_DIL;
+  if (wanted && languages.includes(wanted.slice(0, 2).toLowerCase())) {
+    return wanted.slice(0, 2).toLowerCase();
+  }
+  return 'en';
+}
+
+export function strings(lang) {
+  return messages[lang] ?? messages.en;
+}

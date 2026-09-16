@@ -1,0 +1,37 @@
+{
+  "name": "@talkdedsec/tlk-truss",
+  "version": "0.0.0",
+  "description": "Architecture diagrams bound to real code — text in, single-file HTML out, CI fails when the drawing drifts.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Talkdedsec",
+  "type": "module",
+  "bin": {
+    "truss": "./bin/truss.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "README.md",
+    "README.tr.md"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "keywords": [
+    "architecture",
+    "diagram",
+    "diagram-as-code",
+    "drift",
+    "documentation",
+    "ci"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Talkdedsec/tlk-truss.git"
+  },
+  "homepage": "https://talkdedsec.github.io/tlk-truss"
+}
