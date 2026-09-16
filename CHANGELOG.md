@@ -3,7 +3,7 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.1.0] - 2026-09-16
 
 ### Added
 
@@ -18,3 +18,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `export` to SVG, DOT, Mermaid and JSON; `import` from Mermaid flowchart, sequence and state
   diagrams.
 - A browser runner built on the debugging protocol, used by the page tests.
+
+[0.1.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.1.0
