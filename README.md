@@ -22,6 +22,20 @@ v0.1 work in progress, feature complete and tested: four views, the measured lay
 single-file HTML output with live editing, the drift gate, exporters and Mermaid import. What is
 left is packaging — CI, the published demo and the npm release.
 
+## What it looks like
+
+| Architecture | Sequence |
+|---|---|
+| ![architecture](assets/architecture.png) | ![sequence](assets/sequence.png) |
+
+| Data flow | Lifecycle |
+|---|---|
+| ![data flow](assets/dataflow.png) | ![lifecycle](assets/lifecycle.png) |
+
+Edit mode, with the live source next to the drawing:
+
+![editing](assets/editing.png)
+
 ## Install
 
 Node 20 or newer, no runtime dependencies.

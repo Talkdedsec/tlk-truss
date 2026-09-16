@@ -1,0 +1,15 @@
+name: Idea
+description: Something the tool should be able to say.
+labels: [idea]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The diagram you cannot draw today
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: What the source for it would look like
+      render: text

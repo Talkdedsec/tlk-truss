@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node --version
+      - run: npm test
+
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: the rendered page must not reach the network
+        run: |
+          node bin/truss.mjs draw examples/payments.truss -o page.html
+          if grep -Eo 'https?://[^"'"'"' )]+' page.html | grep -v 'www.w3.org'; then
+            echo 'the page carries an external reference'
+            exit 1
+          fi
+
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: our own diagrams must still match this repository
+        run: |
+          for source in examples/*.truss; do
+            node bin/truss.mjs check "$source" --root . --ci
+          done

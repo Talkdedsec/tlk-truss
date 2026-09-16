@@ -1,7 +1,7 @@
 {
   "name": "@talkdedsec/tlk-truss",
   "version": "0.0.0",
-  "description": "Architecture diagrams bound to real code — text in, single-file HTML out, CI fails when the drawing drifts.",
+  "description": "Architecture diagrams bound to real code \u2014 text in, single-file HTML out, CI fails when the drawing drifts.",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Talkdedsec",
   "type": "module",
@@ -21,7 +21,8 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "test:browser": "node --test test/page.browser.mjs",
-    "test:all": "node --test"
+    "test:all": "node --test",
+    "build:docs": "node scripts/build-docs.mjs"
   },
   "keywords": [
     "architecture",

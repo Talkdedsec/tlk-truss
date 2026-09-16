@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Commercial licence · Ticari lisans
+    url: https://github.com/Talkdedsec/tlk-truss/blob/main/COMMERCIAL.md
+    about: Using tlk-truss inside a company or a paid engagement.
