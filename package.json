@@ -1,6 +1,6 @@
 {
   "name": "@talkdedsec/tlk-truss",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Architecture diagrams bound to real code \u2014 text in, single-file HTML out, CI fails when the drawing drifts.",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Talkdedsec",
@@ -14,6 +14,7 @@
   "files": [
     "bin",
     "src",
+    "action.yml",
     "LICENSE",
     "README.md",
     "README.tr.md"
@@ -36,5 +37,9 @@
     "type": "git",
     "url": "git+https://github.com/Talkdedsec/tlk-truss.git"
   },
-  "homepage": "https://talkdedsec.github.io/tlk-truss"
+  "homepage": "https://talkdedsec.github.io/tlk-truss",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  }
 }

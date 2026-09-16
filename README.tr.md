@@ -124,7 +124,7 @@ bir CI işinin ihtiyacı olan tek şey bu:
 Hazır bir action da var:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.1.0
+- uses: Talkdedsec/tlk-truss@v0.2.0
   with:
     sources: docs/*.truss
     uncovered: true
@@ -156,6 +156,18 @@ Yerleşim otomatiktir ve öyle kalır: döngüler kırılır, katmanlar atanır,
 sezgiseliyle seçilir, kesişmeler Fenwick ağacıyla sayılır, koordinatlar düz çizgiye doğru gevşetilir
 ve grup kutuları üyesi olmayan düğümlerin dışına itilir. Kaynak dilinde elle koordinat yoktur, çünkü
 elle yerleştirilen diyagramı kimse güncellemez.
+
+## Kütüphane olarak
+
+```js
+import { draw, check, fromMermaid } from '@talkdedsec/tlk-truss';
+
+const { html, diagram, diagnostics } = draw(kaynak);
+console.log(diagram.stats.crossings);
+```
+
+`parse`, `build`, `layout`, `renderDiagram`, `renderPage`, `toSource` ve tanı yardımcıları da dışa
+aktarılıyor; kendi hattını kurmak isteyen için.
 
 ## Lisans
 
