@@ -124,7 +124,7 @@ which is all a CI job needs:
 There is an action for it as well:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.1.0
+- uses: Talkdedsec/tlk-truss@v0.2.0
   with:
     sources: docs/*.truss
     uncovered: true
@@ -157,6 +157,18 @@ The layout is automatic and always is: cycles are broken, layers assigned, order
 median heuristic, crossings counted with a Fenwick tree, coordinates relaxed towards straight lines,
 and group boxes pushed clear of nodes that do not belong to them. There are no manual coordinates in
 the source language, because a diagram you have to hand-place is a diagram nobody updates.
+
+## As a library
+
+```js
+import { draw, check, fromMermaid } from '@talkdedsec/tlk-truss';
+
+const { html, diagram, diagnostics } = draw(source);
+console.log(diagram.stats.crossings);
+```
+
+`parse`, `build`, `layout`, `renderDiagram`, `renderPage`, `toSource` and the diagnostic helpers are
+exported too, for anyone who wants their own pipeline.
 
 ## Licence
 
