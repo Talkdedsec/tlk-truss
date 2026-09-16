@@ -3,6 +3,14 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.1] - 2026-09-16
+
+### Fixed
+
+- `bin.truss` pointed at `./bin/truss.mjs`. npm strips a `bin` entry whose path starts with `./`,
+  so the published package would have installed without the `truss` command. `publish:check` now
+  refuses that shape.
+
 ## [0.3.0] - 2026-09-16
 
 ### Added
@@ -50,6 +58,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   diagrams.
 - A browser runner built on the debugging protocol, used by the page tests.
 
+[0.3.1]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.3.1
 [0.3.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.1.0
