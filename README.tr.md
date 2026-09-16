@@ -22,6 +22,20 @@ v0.1 sürüyor; özellikleri tamam ve test edildi: dört görünüm, ölçülü 
 HTML çıktısı ve içindeki canlı düzenleme, sapma kapısı, dışa aktarıcılar ve Mermaid içe aktarma.
 Kalan iş paketleme — CI, yayınlanan demo ve npm sürümü.
 
+## Nasıl görünüyor
+
+| Mimari | Sekans |
+|---|---|
+| ![mimari](assets/architecture.png) | ![sekans](assets/sequence.png) |
+
+| Veri akışı | Durum |
+|---|---|
+| ![veri akışı](assets/dataflow.png) | ![durum](assets/lifecycle.png) |
+
+Düzenleme modu, çizimin yanında canlı kaynak:
+
+![düzenleme](assets/editing.png)
+
 ## Kurulum
 
 Node 20 ve üstü, çalışma zamanı bağımlılığı yok.
