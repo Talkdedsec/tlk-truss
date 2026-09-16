@@ -13,6 +13,24 @@ export function renderSequence(diagram) {
   }
   parts.push('</g>');
 
+  parts.push('<g class="frames">');
+  for (const frame of diagram.frames) {
+    const tag = frame.kind;
+    const width = tag.length * 7 + 18;
+    parts.push(
+      `<g class="frame" data-frame="${escapeXml(frame.id)}">` +
+        `<rect class="outline" x="${frame.x.toFixed(1)}" y="${frame.y.toFixed(1)}" ` +
+        `width="${frame.w.toFixed(1)}" height="${frame.h.toFixed(1)}" rx="10"/>` +
+        `<path class="tab" d="M ${frame.x.toFixed(1)} ${(frame.y + 10).toFixed(1)} ` +
+        `a 10 10 0 0 1 10 -10 H ${(frame.x + width).toFixed(1)} ` +
+        `l -9 20 H ${(frame.x + 10).toFixed(1)} a 10 10 0 0 1 -10 -10 Z"/>` +
+        `<text class="tag" x="${(frame.x + 11).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(tag)}</text>` +
+        `<text class="caption" x="${(frame.x + width + 10).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(trim(frame.label, 44))}</text>` +
+        '</g>',
+    );
+  }
+  parts.push('</g>');
+
   parts.push('<g class="bars">');
   for (const bar of diagram.bars) {
     parts.push(

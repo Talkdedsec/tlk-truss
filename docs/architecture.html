@@ -51,6 +51,10 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .lifeline { stroke: var(--line); stroke-dasharray: 4 6; }
 .message-label { fill: var(--text); font-size: 11.5px; }
 .bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }
+.frame .outline { fill: none; stroke: var(--line); }
+.frame .tab { fill: var(--raised); stroke: var(--line); }
+.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }
+.frame .caption { fill: var(--muted); font-size: 11px; }
 .note path { fill: var(--raised); stroke: var(--line); }
 .note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }
@@ -153,6 +157,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 <g class="edge" data-from="ledger" data-to="db">
 <path class="hit" d="M 136.0 918.0 L 136.0 1014.0"/>
 <path class="stroke" d="M 136.0 918.0 L 136.0 1014.0" marker-end="url(#tip)"/>
+<g class="edge-label" transform="translate(136.0 966.0)"><rect x="-51.8" y="-10" width="103.6" height="20" rx="6"/><text text-anchor="middle" y="4">writes entries</text></g>
 </g>
 <g class="edge" data-from="pay" data-to="bank">
 <path class="hit" d="M 308.0 610.0 L 308.0 645.0 Q 308.0 658.0 321.0 658.0 L 469.0 658.0 Q 482.0 658.0 482.0 671.0 L 482.0 706.0"/>
@@ -226,7 +231,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 </main>
 <footer id="stats"></footer>
 </div>
-<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"payment-platform","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Payment Platform\nview   architecture\n\ngroup edge \"Edge\"\ngroup core \"Core services\"\ngroup data \"Data\"\n\nnode web \"Storefront\" in=edge kind=client code=src/**\nnode cdn \"CDN\" in=edge kind=infra\nnode api \"API Gateway\" in=core code=src/cli.mjs\nnode pay \"Payment\" in=core code=src/commands/*.mjs\nnode ledger \"Ledger\" in=core code=src/model.mjs\nnode bus \"Event bus\" in=core kind=queue code=src/layout/*.mjs\nnode db \"Postgres\" in=data kind=store code=package.json\nnode bank \"Acquirer\" kind=external note=\"third party, no code of ours\"\n\nweb -> cdn : assets\nweb -> api : REST\ncdn -> api\napi -> pay : charge\npay -> ledger : post entry\npay ~> bus : payment.captured\nbus ~> ledger\nledger -> db\npay -> bank : authorise\nbank ~> pay : webhook\n"};</script>
+<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"payment-platform","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.frame .outline { fill: none; stroke: var(--line); }\n.frame .tab { fill: var(--raised); stroke: var(--line); }\n.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }\n.frame .caption { fill: var(--muted); font-size: 11px; }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Payment Platform\nview   architecture\n\ngroup edge \"Edge\"\ngroup core \"Core services\"\ngroup data \"Data\"\n\nnode web \"Storefront\" in=edge kind=client code=src/**\nnode cdn \"CDN\" in=edge kind=infra\nnode api \"API Gateway\" in=core code=src/cli.mjs\nnode pay \"Payment\" in=core code=src/commands/*.mjs\nnode ledger \"Ledger\" in=core code=src/model.mjs\nnode bus \"Event bus\" in=core kind=queue code=src/layout/*.mjs\nnode db \"Postgres\" in=data kind=store code=package.json\nnode bank \"Acquirer\" kind=external note=\"third party, no code of ours\"\n\nweb -> cdn : assets\nweb -> api : REST\ncdn -> api\napi -> pay : charge\npay -> ledger : post entry\npay ~> bus : payment.captured\nbus ~> ledger\nledger -> db : \"writes entries\" code=src/glob.mjs\npay -> bank : authorise\nbank ~> pay : webhook\n"};</script>
 <script>window.__trussEngine = (function () {
 const directives = new Map([
   ['title', 'title'],
@@ -246,6 +251,17 @@ const blocks = new Map([
   ['grup', 'group'],
   ['node', 'node'],
   ['dugum', 'node'],
+]);
+
+const frameKinds = new Map([
+  ['loop', 'loop'],
+  ['dongu', 'loop'],
+  ['alt', 'alt'],
+  ['secenek', 'alt'],
+  ['opt', 'opt'],
+  ['istege', 'opt'],
+  ['par', 'par'],
+  ['paralel', 'par'],
 ]);
 
 const attrNames = new Map([
@@ -338,7 +354,11 @@ function parse(source, { path = '<source>' } = {}) {
     groups: [],
     nodes: [],
     edges: [],
+    frames: [],
   };
+
+  const open = [];
+  let frameCount = 0;
 
   const report = (code, line, params = {}) => {
     diagnostics.push({ code, line, ...params });
@@ -364,6 +384,16 @@ function parse(source, { path = '<source>' } = {}) {
     }
     const head = tokens[0].toLowerCase();
 
+    if (head === 'block' || head === 'blok') {
+      readFrame(tokens.slice(1), lineNumber);
+      continue;
+    }
+    if (head === 'end' || head === 'son') {
+      if (!open.length) report('E108', lineNumber);
+      else open.pop();
+      continue;
+    }
+
     if (directives.has(head)) {
       readDirective(directives.get(head), tokens.slice(1), lineNumber);
       continue;
@@ -375,7 +405,32 @@ function parse(source, { path = '<source>' } = {}) {
     report('E101', lineNumber, { token: tokens[0] });
   }
 
+  for (const frame of open) report('E107', frame.line, { token: frame.label });
+
   return { spec, diagnostics };
+
+  function readFrame(rest, line) {
+    if (!rest.length) {
+      report('E104', line, { token: 'block' });
+      return;
+    }
+    const kind = frameKinds.get(rest[0].toLowerCase());
+    if (!kind) {
+      report('E109', line, { token: rest[0], hint: [...new Set(frameKinds.values())].join(', ') });
+      return;
+    }
+    frameCount += 1;
+    const frame = {
+      id: `f${frameCount}`,
+      kind,
+      label: rest[1] ? unquote(rest.slice(1).join(' ')) : '',
+      depth: open.length,
+      parent: open.length ? open[open.length - 1].id : '',
+      line,
+    };
+    spec.frames.push(frame);
+    open.push(frame);
+  }
 
   function readDirective(name, rest, line) {
     if (!rest.length) {
@@ -440,7 +495,15 @@ function parse(source, { path = '<source>' } = {}) {
       edgeLabel = unquote(tokens[0]);
       attrs = readAttrs(tokens.slice(1), line, report);
     }
-    spec.edges.push({ from, to, label: edgeLabel, style: arrows.get(arrow), line, ...attrs });
+    spec.edges.push({
+      from,
+      to,
+      label: edgeLabel,
+      style: arrows.get(arrow),
+      frame: open.length ? open[open.length - 1].id : '',
+      line,
+      ...attrs,
+    });
   }
 }
 
@@ -577,6 +640,8 @@ function build(spec) {
       label: entry.label ?? '',
       style: entry.style ?? 'solid',
       note: entry.note ?? '',
+      code: entry.code ?? '',
+      frame: entry.frame ?? '',
       line: entry.line,
     });
   }
@@ -584,6 +649,9 @@ function build(spec) {
   for (const node of nodes) {
     if (node.degree === 0) report('W302', node.line, { token: node.id });
   }
+
+  const frames = spec.frames ?? [];
+  if (frames.length && kept !== 'sequence') report('W303', frames[0].line);
 
   return {
     model: {
@@ -595,6 +663,8 @@ function build(spec) {
       groups,
       nodes,
       edges,
+      frames: kept === 'sequence' ? frames : [],
+      frameIndex: new Map(frames.map((frame) => [frame.id, frame])),
       nodeIndex,
     },
     diagnostics,
@@ -633,14 +703,53 @@ function toSource(model) {
   }
   lines.push('');
 
+  const frameOf = new Map((model.frames ?? []).map((frame) => [frame.id, frame]));
+  const chainFor = (id) => {
+    const chain = [];
+    let cursor = id;
+    while (cursor && frameOf.has(cursor)) {
+      chain.unshift(frameOf.get(cursor));
+      cursor = frameOf.get(cursor).parent;
+    }
+    return chain;
+  };
+  let openFrames = [];
+  const indent = () => '  '.repeat(openFrames.length);
+
   for (const edge of model.edges) {
+    const wanted = chainFor(edge.frame);
+    let shared = 0;
+    while (
+      shared < openFrames.length &&
+      shared < wanted.length &&
+      openFrames[shared].id === wanted[shared].id
+    ) {
+      shared += 1;
+    }
+    while (openFrames.length > shared) {
+      openFrames.pop();
+      lines.push(`${indent()}end`);
+    }
+    for (let i = shared; i < wanted.length; i += 1) {
+      const frame = wanted[i];
+      lines.push(`${indent()}block ${frame.kind}${frame.label ? ` ${quote(frame.label)}` : ''}`);
+      openFrames.push(frame);
+    }
     const arrow = arrowFor[edge.style] ?? '->';
-    const tail = edge.note
-      ? ` : ${quote(edge.label)} note=${quote(edge.note)}`
+    const attrs = [
+      edge.code ? `code=${edge.code}` : '',
+      edge.note ? `note=${quote(edge.note)}` : '',
+    ].filter(Boolean);
+    const tail = attrs.length
+      ? ` : ${quote(edge.label)} ${attrs.join(' ')}`
       : edge.label
         ? ` : ${edge.label}`
         : '';
-    lines.push(`${edge.from} ${arrow} ${edge.to}${tail}`);
+    lines.push(`${indent()}${edge.from} ${arrow} ${edge.to}${tail}`);
+  }
+  while (openFrames.length) {
+    openFrames.pop();
+    lines.push(`${indent()}end`);
   }
   return `${lines.join('\n')}\n`;
 }
@@ -973,6 +1082,8 @@ function place(layers, links, sizes, { passes = 6 } = {}) {
 
 
 const sequenceMetrics = {
+  framePad: 20,
+  frameHead: 38,
   barWidth: 11,
   headHeight: 52,
   headGap: 56,
@@ -998,8 +1109,28 @@ function layoutSequence(model) {
   const laneOf = new Map(lanes.map((lane) => [lane.id, lane]));
   const top = sequenceMetrics.margin + sequenceMetrics.headHeight + sequenceMetrics.firstMessage;
 
+  const frameOf = new Map((model.frames ?? []).map((frame) => [frame.id, frame]));
+  const chainOf = (id) => {
+    const chain = [];
+    let cursor = id;
+    while (cursor && frameOf.has(cursor)) {
+      chain.unshift(cursor);
+      cursor = frameOf.get(cursor).parent;
+    }
+    return chain;
+  };
+
   let depth = top;
+  let standing = [];
   const messages = model.edges.map((edge, index) => {
+    const wanted = chainOf(edge.frame);
+    let shared = 0;
+    while (shared < standing.length && shared < wanted.length && standing[shared] === wanted[shared]) {
+      shared += 1;
+    }
+    depth += (standing.length - shared) * sequenceMetrics.framePad;
+    depth += (wanted.length - shared) * sequenceMetrics.frameHead;
+    standing = wanted;
     const from = laneOf.get(edge.from);
     const to = laneOf.get(edge.to);
     const self = edge.from === edge.to;
@@ -1008,6 +1139,7 @@ function layoutSequence(model) {
       from: edge.from,
       to: edge.to,
       label: edge.label,
+      frame: edge.frame ?? '',
       note: edge.note ?? '',
       style: edge.style,
       self,
@@ -1022,6 +1154,50 @@ function layoutSequence(model) {
       : sequenceMetrics.messageGap;
     return message;
   });
+
+  const frames = (model.frames ?? [])
+    .map((frame) => {
+      const inside = messages.filter((message) => chainOf(message.frame).includes(frame.id));
+      if (!inside.length) return null;
+      const involved = new Set();
+      for (const message of inside) {
+        involved.add(message.from);
+        involved.add(message.to);
+      }
+      const lanesInside = lanes.filter((lane) => involved.has(lane.id));
+      const inset = frame.depth * 9;
+      const left = Math.min(...lanesInside.map((lane) => lane.centre)) - sequenceMetrics.framePad * 2 + inset;
+      const right =
+        Math.max(...lanesInside.map((lane) => Math.max(lane.centre, ...inside.map((m) => m.reach)))) +
+        sequenceMetrics.framePad - inset;
+      const firstY = Math.min(...inside.map((message) => message.y));
+      const lastY = Math.max(...inside.map((message) => message.y + message.drop));
+      return {
+        id: frame.id,
+        kind: frame.kind,
+        label: frame.label,
+        x: left,
+        y: firstY - sequenceMetrics.frameHead - 8,
+        w: right - left,
+        h: lastY - firstY + sequenceMetrics.frameHead + sequenceMetrics.framePad + 8,
+      };
+    })
+    .filter(Boolean);
+
+  const nesting = new Map(frames.map((frame) => [frame.id, frameOf.get(frame.id).depth]));
+  const byDepth = [...frames].sort((a, b) => nesting.get(b.id) - nesting.get(a.id));
+  for (const inner of byDepth) {
+    let parent = frameOf.get(inner.id).parent;
+    while (parent) {
+      const outer = frames.find((frame) => frame.id === parent);
+      if (outer) {
+        const bottom = Math.max(outer.y + outer.h, inner.y + inner.h + 10);
+        outer.y = Math.min(outer.y, inner.y - 10);
+        outer.h = bottom - outer.y;
+      }
+      parent = frameOf.get(parent)?.parent ?? '';
+    }
+  }
 
   const bars = [];
   const open = [];
@@ -1068,12 +1244,14 @@ function layoutSequence(model) {
       cursor - sequenceMetrics.headGap,
       ...messages.map((message) => message.reach + sequenceMetrics.margin),
       ...notes.map((note) => note.x + note.text.length * 6.4 + 28),
+      ...frames.map((frame) => frame.x + frame.w + sequenceMetrics.margin),
     ) + sequenceMetrics.margin;
 
   return {
     kind: 'sequence',
     lanes,
     messages,
+    frames,
     bars,
     notes,
     lifelineEnd,
@@ -1630,6 +1808,24 @@ function renderSequence(diagram) {
   }
   parts.push('</g>');
 
+  parts.push('<g class="frames">');
+  for (const frame of diagram.frames) {
+    const tag = frame.kind;
+    const width = tag.length * 7 + 18;
+    parts.push(
+      `<g class="frame" data-frame="${escapeXml(frame.id)}">` +
+        `<rect class="outline" x="${frame.x.toFixed(1)}" y="${frame.y.toFixed(1)}" ` +
+        `width="${frame.w.toFixed(1)}" height="${frame.h.toFixed(1)}" rx="10"/>` +
+        `<path class="tab" d="M ${frame.x.toFixed(1)} ${(frame.y + 10).toFixed(1)} ` +
+        `a 10 10 0 0 1 10 -10 H ${(frame.x + width).toFixed(1)} ` +
+        `l -9 20 H ${(frame.x + 10).toFixed(1)} a 10 10 0 0 1 -10 -10 Z"/>` +
+        `<text class="tag" x="${(frame.x + 11).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(tag)}</text>` +
+        `<text class="caption" x="${(frame.x + width + 10).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(trim(frame.label, 44))}</text>` +
+        '</g>',
+    );
+  }
+  parts.push('</g>');
+
   parts.push('<g class="bars">');
   for (const bar of diagram.bars) {
     parts.push(
@@ -1925,8 +2121,12 @@ function paintPanel() {
         ? '<div class="form">' +
           field(t('label'), 'label', edge.label) +
           field(t('style'), 'style', edge.style, ['solid', 'async', 'both']) +
+          field(t('code'), 'code', edge.code) +
+          field(t('note'), 'note', edge.note) +
           '<div class="actions"><button data-act="drop">' + t('remove') + '</button></div></div>'
-        : '<dl>' + row(t('label'), escapeHtml(edge.label) || t('none')) + '</dl>');
+        : '<dl>' + row(t('label'), escapeHtml(edge.label) || t('none')) +
+          (edge.code ? row(t('code'), '<code>' + escapeHtml(edge.code) + '</code>') : '') +
+          (edge.note ? row(t('note'), escapeHtml(edge.note)) : '') + '</dl>');
     bindPanel(edge, 'edge');
     return;
   }

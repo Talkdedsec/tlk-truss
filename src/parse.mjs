@@ -18,6 +18,17 @@ const blocks = new Map([
   ['dugum', 'node'],
 ]);
 
+const frameKinds = new Map([
+  ['loop', 'loop'],
+  ['dongu', 'loop'],
+  ['alt', 'alt'],
+  ['secenek', 'alt'],
+  ['opt', 'opt'],
+  ['istege', 'opt'],
+  ['par', 'par'],
+  ['paralel', 'par'],
+]);
+
 const attrNames = new Map([
   ['in', 'group'],
   ['icinde', 'group'],
@@ -108,7 +119,11 @@ export function parse(source, { path = '<source>' } = {}) {
     groups: [],
     nodes: [],
     edges: [],
+    frames: [],
   };
+
+  const open = [];
+  let frameCount = 0;
 
   const report = (code, line, params = {}) => {
     diagnostics.push({ code, line, ...params });
@@ -134,6 +149,16 @@ export function parse(source, { path = '<source>' } = {}) {
     }
     const head = tokens[0].toLowerCase();
 
+    if (head === 'block' || head === 'blok') {
+      readFrame(tokens.slice(1), lineNumber);
+      continue;
+    }
+    if (head === 'end' || head === 'son') {
+      if (!open.length) report('E108', lineNumber);
+      else open.pop();
+      continue;
+    }
+
     if (directives.has(head)) {
       readDirective(directives.get(head), tokens.slice(1), lineNumber);
       continue;
@@ -145,7 +170,32 @@ export function parse(source, { path = '<source>' } = {}) {
     report('E101', lineNumber, { token: tokens[0] });
   }
 
+  for (const frame of open) report('E107', frame.line, { token: frame.label });
+
   return { spec, diagnostics };
+
+  function readFrame(rest, line) {
+    if (!rest.length) {
+      report('E104', line, { token: 'block' });
+      return;
+    }
+    const kind = frameKinds.get(rest[0].toLowerCase());
+    if (!kind) {
+      report('E109', line, { token: rest[0], hint: [...new Set(frameKinds.values())].join(', ') });
+      return;
+    }
+    frameCount += 1;
+    const frame = {
+      id: `f${frameCount}`,
+      kind,
+      label: rest[1] ? unquote(rest.slice(1).join(' ')) : '',
+      depth: open.length,
+      parent: open.length ? open[open.length - 1].id : '',
+      line,
+    };
+    spec.frames.push(frame);
+    open.push(frame);
+  }
 
   function readDirective(name, rest, line) {
     if (!rest.length) {
@@ -210,6 +260,14 @@ export function parse(source, { path = '<source>' } = {}) {
       edgeLabel = unquote(tokens[0]);
       attrs = readAttrs(tokens.slice(1), line, report);
     }
-    spec.edges.push({ from, to, label: edgeLabel, style: arrows.get(arrow), line, ...attrs });
+    spec.edges.push({
+      from,
+      to,
+      label: edgeLabel,
+      style: arrows.get(arrow),
+      frame: open.length ? open[open.length - 1].id : '',
+      line,
+      ...attrs,
+    });
   }
 }

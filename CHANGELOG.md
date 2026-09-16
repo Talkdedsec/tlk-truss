@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.0] - 2026-09-16
+
+### Added
+
+- `block loop|alt|opt|par "why"` … `end` in the sequence view, with nesting, Turkish spellings
+  (`blok dongu|secenek|istege|paralel` … `son`), and both an unclosed block and a stray `end`
+  reported by their own diagnostics.
+- The package is ready to publish: a public scope, a library entry point, an SPDX licence field,
+  `prepublishOnly`, and a release workflow that publishes with provenance from CI.
+
 ## [0.2.0] - 2026-09-16
 
 ### Added
@@ -40,5 +50,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   diagrams.
 - A browser runner built on the debugging protocol, used by the page tests.
 
+[0.3.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.1.0

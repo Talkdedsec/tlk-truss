@@ -80,6 +80,8 @@ pay -> bank : authorise
 - `code=` is the binding: a path or a glob, several separated by commas
 - `note=` hangs a note off a node, or off a message in a sequence:
   `api -> pay : "charge" note="idempotent"`
+- in a sequence, `block loop|alt|opt|par "why"` … `end` frames the messages between them, and
+  blocks nest
 - `#` starts a comment
 
 Every keyword also has a Turkish spelling (`baslik`, `grup`, `dugum`, `icinde=`, `tur=`, `kod=`),
@@ -90,7 +92,7 @@ and the two can be mixed in one file.
 | `view` | What it draws | What changes |
 |---|---|---|
 | `architecture` | services, stores, boundaries | grouped boxes, layered top to bottom |
-| `sequence` | one run, message by message | lifelines, activation bars, notes, self calls |
+| `sequence` | one run, message by message | lifelines, activation bars, notes, blocks, self calls |
 | `dataflow` | a pipeline | left to right, sources and sinks drawn slanted |
 | `lifecycle` | a state machine | pills, a start dot, an end ring, self transitions as loops |
 
@@ -124,7 +126,7 @@ which is all a CI job needs:
 There is an action for it as well:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.2.0
+- uses: Talkdedsec/tlk-truss@v0.3.0
   with:
     sources: docs/*.truss
     uncovered: true

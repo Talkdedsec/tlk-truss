@@ -13,8 +13,10 @@ shopper -> web  : submits the basket
 web     -> api  : POST /orders
 api     -> api  : validate the basket
 api     -> pay  : "authorise 49.90 EUR" note="retried with the same key"
+block loop "up to three attempts"
 pay     -> bank : card authorisation
 bank    -> pay  : approved
+end
 pay     ~> bus  : payment.captured
 pay     -> api  : receipt
 api     -> web  : 201 Created
