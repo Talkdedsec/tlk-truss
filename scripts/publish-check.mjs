@@ -50,9 +50,14 @@ check('the licence is a licence npm understands', () => {
   return pkg.license;
 });
 
-check('the entry points exist', () => {
+check('the entry points exist and npm will keep them', () => {
   readFileSync(new URL('../bin/truss.mjs', import.meta.url));
   readFileSync(new URL('../src/index.mjs', import.meta.url));
+  for (const [name, target] of Object.entries(pkg.bin)) {
+    if (target.startsWith('./')) {
+      throw new Error(`bin.${name} starts with ./ and npm drops it on publish`);
+    }
+  }
   return `${pkg.bin.truss}, ${pkg.exports['.']}`;
 });
 
