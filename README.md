@@ -2,6 +2,8 @@
 
 Architecture diagrams bound to real code.
 
+[![ci](https://github.com/Talkdedsec/tlk-truss/actions/workflows/ci.yml/badge.svg)](https://github.com/Talkdedsec/tlk-truss/actions/workflows/ci.yml)
+
 Every diagram-as-code tool turns text into a picture. None of them can tell you when the picture
 started lying. `truss` binds each node to a path in the repository and fails your build when that
 path is gone.
