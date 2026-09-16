@@ -4,6 +4,7 @@ import { draw } from './commands/draw.mjs';
 import { check } from './commands/check.mjs';
 import { exportDiagram } from './commands/export.mjs';
 import { importDiagram } from './commands/import.mjs';
+import { watch } from './commands/watch.mjs';
 
 const aliases = {
   draw: 'draw',
@@ -14,6 +15,8 @@ const aliases = {
   disaaktar: 'export',
   import: 'import',
   iceaktar: 'import',
+  watch: 'watch',
+  izle: 'watch',
   help: 'help',
   yardim: 'help',
 };
@@ -58,6 +61,7 @@ function help(s) {
     `  check     ${s.cmdCheck}`,
     `  export    ${s.cmdExport}`,
     `  import    ${s.cmdImport}`,
+    `  watch     ${s.cmdWatch}`,
     `  help      ${s.cmdHelp}`,
     '',
     `${s.options}:`,
@@ -114,12 +118,15 @@ export function run(argv, io = console) {
         : typeof flags.bicim === 'string'
           ? flags.bicim
           : 'svg',
+    serve: Boolean(flags.serve || flags.sun),
+    port: Number(flags.port ?? flags.kapi ?? 4173),
   };
 
   if (command === 'draw') return draw(options, io);
   if (command === 'check') return check(options, io);
   if (command === 'export') return exportDiagram(options, io);
   if (command === 'import') return importDiagram(options, io);
+  if (command === 'watch') return watch(options, io);
 
   io.error(s.notReady(command));
   return 2;

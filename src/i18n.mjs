@@ -30,6 +30,10 @@ const messages = {
     checkPassed: 'every code binding resolves',
     checkFailed: 'binding(s) no longer resolve',
     unknownFormat: (list) => `Unknown format. Available: ${list}`,
+    cmdWatch: 're-render whenever the source changes; --serve reloads the page too',
+    watching: 'Watching',
+    serving: 'Serving',
+    stopped: 'Stopped.',
   },
   tr: {
     tagline: 'Gerçek koda bağlı mimari diyagramlar.',
@@ -62,6 +66,10 @@ const messages = {
     checkPassed: 'bütün kod bağları çözülüyor',
     checkFailed: 'bağ artık çözülmüyor',
     unknownFormat: (list) => `Bilinmeyen biçim. Kullanılabilir: ${list}`,
+    cmdWatch: 'kaynak değişince yeniden çizer; --serve sayfayı da tazeler',
+    watching: 'İzleniyor',
+    serving: 'Sunuluyor',
+    stopped: 'Durduruldu.',
   },
 };
 

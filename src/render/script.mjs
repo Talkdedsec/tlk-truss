@@ -128,6 +128,17 @@ function bindScene() {
     });
   }
 
+  const boxes = svg.querySelectorAll('.group');
+  for (let i = 0; i < boxes.length; i += 1) {
+    const element = boxes[i];
+    element.addEventListener('click', function (event) {
+      if (!editing) return;
+      event.stopPropagation();
+      selection = { type: 'group', id: element.dataset.group };
+      paintPanel();
+    });
+  }
+
   const edges = svg.querySelectorAll('.edge');
   for (let i = 0; i < edges.length; i += 1) {
     const element = edges[i];
@@ -197,6 +208,21 @@ function paintPanel() {
     return;
   }
 
+  if (selection.type === 'group') {
+    const group = model.groups.filter(function (entry) { return entry.id === selection.id; })[0];
+    if (!group) { selection = null; panel.classList.remove('open'); return; }
+    const members = model.nodes.filter(function (node) { return node.group === group.id; });
+    panel.innerHTML =
+      '<h2>' + escapeHtml(group.label) + '</h2><div class="muted">' + escapeHtml(group.id) + '</div>' +
+      (editing
+        ? '<div class="form">' + field(t('labelField'), 'label', group.label) +
+          '<div class="actions"><button data-act="drop">' + t('remove') + '</button></div></div>'
+        : '') +
+      '<dl>' + row(t('members'), members.length ? escapeHtml(members.map(function (node) { return node.id; }).join(', ')) : t('none')) + '</dl>';
+    bindPanel(group, 'group');
+    return;
+  }
+
   const node = model.nodeIndex.get(selection.id);
   if (!node) { selection = null; panel.classList.remove('open'); return; }
   const inbound = model.edges.filter(function (e) { return e.to === node.id; }).map(function (e) { return e.from; });
@@ -250,7 +276,12 @@ function bindPanel(target, type) {
         button.textContent = t('pickTarget');
         return;
       }
-      if (type === 'node') {
+      if (type === 'group') {
+        for (const node of model.nodes) {
+          if (node.group === target.id) node.group = '';
+        }
+        model.groups = model.groups.filter(function (entry) { return entry.id !== target.id; });
+      } else if (type === 'node') {
         model.nodes = model.nodes.filter(function (entry) { return entry.id !== target.id; });
         model.edges = model.edges.filter(function (entry) {
           return entry.from !== target.id && entry.to !== target.id;
@@ -311,6 +342,8 @@ function paintChrome() {
   document.getElementById('sourceButton').textContent = t('source');
   document.getElementById('addNode').textContent = t('addNode');
   document.getElementById('addNode').hidden = !editing;
+  document.getElementById('addGroup').textContent = t('addGroup');
+  document.getElementById('addGroup').hidden = !editing;
   document.getElementById('sourceButton').hidden = !editing;
   paintFooter();
 }
@@ -355,6 +388,21 @@ document.getElementById('addNode').addEventListener('click', function () {
   }
   commit();
   selection = { type: 'node', id: id };
+  paintPanel();
+});
+
+document.getElementById('addGroup').addEventListener('click', function () {
+  let index = model.groups.length + 1;
+  const taken = {};
+  for (const group of model.groups) taken[group.id] = true;
+  while (taken['g' + index]) index += 1;
+  const id = 'g' + index;
+  model.groups.push({ id: id, label: t('newGroup'), members: [] });
+  if (selection && selection.type === 'node') {
+    model.nodeIndex.get(selection.id).group = id;
+  }
+  commit();
+  selection = { type: 'group', id: id };
   paintPanel();
 });
 

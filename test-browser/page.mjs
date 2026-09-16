@@ -87,7 +87,7 @@ test('a node can be removed and the connections go with it', async () => {
   const after_ = await page.session.evaluate(`
     (function () {
       const box = document.getElementById('sourceText');
-      box.value = 'title T\\nnode a "A"\\nnode b "B"\\nnode c "C"\\na -> b\\nb -> c';
+      box.value = ['title T', 'node a "A"', 'node b "B"', 'node c "C"', 'a -> b', 'b -> c'].join(String.fromCharCode(10));
       document.getElementById('applySource').click();
       document.querySelector('[data-id="b"]').dispatchEvent(new MouseEvent('click', { bubbles: true }));
       document.querySelector('#panel [data-act="drop"]').click();
@@ -95,5 +95,47 @@ test('a node can be removed and the connections go with it', async () => {
     })()
   `);
   assert.equal(after_, '2:0');
+  assert.deepEqual(page.problems, []);
+});
+
+test('a group can be created, filled, renamed and removed from the canvas', async () => {
+  const outcome = await page.session.evaluate(`
+    (function () {
+      const box = document.getElementById('sourceText');
+      box.value = ['title T', 'node a "A"', 'node b "B"', 'a -> b'].join(String.fromCharCode(10));
+      document.getElementById('applySource').click();
+
+      document.querySelector('[data-id="a"]').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.getElementById('addGroup').click();
+
+      const rename = document.querySelector('#panel [data-field="label"]');
+      rename.value = 'Edge';
+      rename.dispatchEvent(new Event('change', { bubbles: true }));
+
+      const drawn = document.querySelectorAll('.group').length;
+      const label = document.querySelector('.group text').textContent;
+      const source = document.getElementById('sourceText').value;
+      return { drawn: drawn, label: label, source: source };
+    })()
+  `);
+  assert.equal(outcome.drawn, 1);
+  assert.equal(outcome.label, 'Edge');
+  assert.match(outcome.source, /group g1 "Edge"/);
+  assert.match(outcome.source, /node a "A" in=g1/);
+
+  const removed = await page.session.evaluate(`
+    (function () {
+      document.querySelector('.group').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.querySelector('#panel [data-act="drop"]').click();
+      return {
+        groups: document.querySelectorAll('.group').length,
+        nodes: document.querySelectorAll('.node').length,
+        source: document.getElementById('sourceText').value,
+      };
+    })()
+  `);
+  assert.equal(removed.groups, 0);
+  assert.equal(removed.nodes, 2);
+  assert.equal(/in=g1/.test(removed.source), false);
   assert.deepEqual(page.problems, []);
 });

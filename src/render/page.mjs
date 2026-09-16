@@ -17,6 +17,9 @@ const ui = {
     source: 'Source',
     addNode: 'Add node',
     newNode: 'New node',
+    addGroup: 'Add group',
+    newGroup: 'New group',
+    members: 'Members',
     apply: 'Apply',
     save: 'Save .truss',
     kind: 'Kind',
@@ -44,6 +47,9 @@ const ui = {
     source: 'Kaynak',
     addNode: 'Düğüm ekle',
     newNode: 'Yeni düğüm',
+    addGroup: 'Grup ekle',
+    newGroup: 'Yeni grup',
+    members: 'Üyeler',
     apply: 'Uygula',
     save: '.truss kaydet',
     kind: 'Tür',
@@ -80,6 +86,8 @@ function themeVariables(name) {
 
 export const svgStyles = `
 .group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }
+body.editing .group rect { cursor: pointer; }
+body.editing .group rect:hover { stroke: var(--line-strong); }
 .group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .node .body { fill: var(--surface); stroke: var(--line); }
 .node polygon.body { fill: var(--surface); stroke: var(--line); }
@@ -196,6 +204,7 @@ ${styles}
   <button id="zoomIn" title="+">+</button>
   <button id="edit"></button>
   <button id="addNode" hidden></button>
+  <button id="addGroup" hidden></button>
   <button id="sourceButton" hidden></button>
   <span class="spacer"></span>
   <button id="svgOut">SVG</button>

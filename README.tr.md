@@ -102,7 +102,12 @@ truss ciz       <kaynak.truss> [-o cikti.html]   tek dosyalık HTML diyagram çi
 truss denetle   <kaynak.truss> [--kok .]         her kod bağının çözüldüğünü doğrular
 truss disaaktar <kaynak.truss> --bicim svg|dot|mermaid|json
 truss iceaktar  <diyagram.mmd>                   Mermaid'i .truss kaynağına çevirir
+truss izle      <kaynak.truss> [--sun]           her kayıtta yeniden çizer
 ```
+
+`izle`, kaynak her değiştiğinde sayfayı yeniden yazar ve yeni sayıları basar. `--sun` ile sayfayı
+`127.0.0.1:4173` üzerinde de sunar ve her kayıtta tarayıcıyı tazeler; tazeleme kodu yalnızca sunulan
+kopyada durur, diskteki dosyada asla.
 
 `iceaktar`, Mermaid `flowchart`, `sequenceDiagram` ve `stateDiagram` kaynaklarını okur; alt grafları,
 şekilleri, ok biçimlerini ve kenar etiketlerini korur ve depoya girebilecek bir kaynak yazar.
@@ -123,7 +128,7 @@ arama, her düğüm için bağını gösteren ayrıntı paneli, SVG/PNG dışa a
 yaptığını sayıyla söyler: düğüm, kenar, katman sayısı ve ölçülmüş kenar kesişmesi altta durur.
 
 Hiçbir şey donuk değil. **Düzenle**'ye bas, sayfa editöre dönüşür: düğümü yeniden adlandır, türünü,
-grubunu ya da kod bağını değiştir, düğüm ve bağlantı ekle ya da sil. Her değişiklikte motorun tamamı
+grubunu ya da kod bağını değiştir, düğüm, bağlantı ve grup ekle ya da sil. Her değişiklikte motorun tamamı
 — sayfanın içinde duruyor — yeniden çalışır ve diyagram gözünün önünde yeniden yerleşir. **Kaynak**
 düğmesi `.truss` metnini canlı gösterir, yapıştırılanı geri alır ve dosyayı kaydeder. Ayrıştırılamayan
 bir değişiklik tanı koduyla reddedilir, çizime dokunulmaz.

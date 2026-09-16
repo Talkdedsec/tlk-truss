@@ -53,9 +53,10 @@ a -> b
   assert.ok(codes.includes('W302'));
 });
 
-test('drops groups that ended up empty', () => {
+test('a group with no members is kept in the model so one can be filled later', () => {
   const { model } = compile('group ghost "Ghost"\nnode a "A"\nnode b "B"\na -> b');
-  assert.equal(model.groups.length, 0);
+  assert.equal(model.groups.length, 1);
+  assert.deepEqual(model.groups[0].members, []);
 });
 
 test('reports an unknown kind and falls back to service', () => {
