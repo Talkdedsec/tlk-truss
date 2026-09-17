@@ -40,7 +40,12 @@ export function toSource(model) {
     }
     return chain;
   };
+  const branchOf = new Map();
+  for (const branch of model.branches ?? []) {
+    branchOf.set(`${branch.frame}#${branch.index}`, branch.label);
+  }
   let openFrames = [];
+  let branchSeen = new Map();
   const indent = () => '  '.repeat(openFrames.length);
 
   for (const edge of model.edges) {
@@ -61,6 +66,14 @@ export function toSource(model) {
       const frame = wanted[i];
       lines.push(`${indent()}block ${frame.kind}${frame.label ? ` ${quote(frame.label)}` : ''}`);
       openFrames.push(frame);
+      branchSeen.set(frame.id, 0);
+    }
+    if (edge.frame && (edge.branch ?? 0) !== (branchSeen.get(edge.frame) ?? 0)) {
+      const label = branchOf.get(`${edge.frame}#${edge.branch}`) ?? '';
+      openFrames.pop();
+      lines.push(`${indent()}else${label ? ` ${quote(label)}` : ''}`);
+      openFrames.push(frameOf.get(edge.frame));
+      branchSeen.set(edge.frame, edge.branch);
     }
     const arrow = arrowFor[edge.style] ?? '->';
     const attrs = [

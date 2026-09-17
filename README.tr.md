@@ -81,8 +81,8 @@ pay -> bank : provizyon
 - `kod=` bağdır: bir yol ya da glob; virgülle birden fazla verilebilir
 - `not=` bir düğüme, sekansta bir mesaja not iliştirir:
   `api -> pay : "tahsilat" not="idempotent"`
-- sekansta `blok dongu|secenek|istege|paralel "neden"` … `son` arasındaki mesajları çerçeveler,
-  bloklar iç içe geçebilir
+- sekansta `blok dongu|secenek|istege|paralel "neden"` … `yoksa "aksi halde"` … `son` arasındaki
+  mesajları çerçeveler; bloklar iç içe geçer, dallar çizgiyle ayrılır
 - `#` yorum satırı başlatır
 
 Her anahtar kelimenin İngilizce yazımı da geçerli (`title`, `group`, `node`, `in=`, `kind=`,
@@ -127,7 +127,7 @@ bir CI işinin ihtiyacı olan tek şey bu:
 Hazır bir action da var:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.3.1
+- uses: Talkdedsec/tlk-truss@v0.4.0
   with:
     sources: docs/*.truss
     uncovered: true
@@ -159,6 +159,21 @@ Yerleşim otomatiktir ve öyle kalır: döngüler kırılır, katmanlar atanır,
 sezgiseliyle seçilir, kesişmeler Fenwick ağacıyla sayılır, koordinatlar düz çizgiye doğru gevşetilir
 ve grup kutuları üyesi olmayan düğümlerin dışına itilir. Kaynak dilinde elle koordinat yoktur, çünkü
 elle yerleştirilen diyagramı kimse güncellemez.
+
+## Ne kadar büyük diyagram kaldırır
+
+Bu motorda ölçüldü; çapraz bağları olan bir ağaç, yukarıdan aşağı katmanlı:
+
+| düğüm | bağlantı | katman | kesişme | süre |
+|---|---|---|---|---|
+| 30 | 39 | 8 | 10 | 7 ms |
+| 60 | 84 | 13 | 48 | 9 ms |
+| 120 | 179 | 25 | 382 | 28 ms |
+| 250 | 369 | 47 | 1458 | 93 ms |
+
+Sorun hız değil, okunabilirlik. Otuz düğümü geçince resim bir şey anlatmayı bırakıyor ve bunu
+hiçbir yerleşim motoru kurtarmıyor — hikâyeyi birkaç diyagrama böl, ya da tek bir fikri değil bütün
+depoyu haritalayan bir araca geç.
 
 ## Kütüphane olarak
 

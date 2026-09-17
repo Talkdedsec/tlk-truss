@@ -120,6 +120,7 @@ export function parse(source, { path = '<source>' } = {}) {
     nodes: [],
     edges: [],
     frames: [],
+    branches: [],
   };
 
   const open = [];
@@ -151,6 +152,20 @@ export function parse(source, { path = '<source>' } = {}) {
 
     if (head === 'block' || head === 'blok') {
       readFrame(tokens.slice(1), lineNumber);
+      continue;
+    }
+    if (head === 'else' || head === 'yoksa') {
+      if (!open.length) report('E112', lineNumber);
+      else {
+        const frame = open[open.length - 1];
+        frame.branches += 1;
+        spec.branches.push({
+          frame: frame.id,
+          index: frame.branches,
+          label: tokens[1] ? unquote(tokens.slice(1).join(' ')) : '',
+          line: lineNumber,
+        });
+      }
       continue;
     }
     if (head === 'end' || head === 'son') {
@@ -191,6 +206,7 @@ export function parse(source, { path = '<source>' } = {}) {
       label: rest[1] ? unquote(rest.slice(1).join(' ')) : '',
       depth: open.length,
       parent: open.length ? open[open.length - 1].id : '',
+      branches: 0,
       line,
     };
     spec.frames.push(frame);
@@ -266,6 +282,7 @@ export function parse(source, { path = '<source>' } = {}) {
       label: edgeLabel,
       style: arrows.get(arrow),
       frame: open.length ? open[open.length - 1].id : '',
+      branch: open.length ? open[open.length - 1].branches : 0,
       line,
       ...attrs,
     });

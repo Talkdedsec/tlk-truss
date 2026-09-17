@@ -149,6 +149,17 @@ function bindScene() {
       paintPanel();
     });
   }
+
+  const blocks = svg.querySelectorAll('.frame');
+  for (let i = 0; i < blocks.length; i += 1) {
+    const element = blocks[i];
+    element.addEventListener('click', function (event) {
+      if (!editing) return;
+      event.stopPropagation();
+      selection = { type: 'frame', id: element.dataset.frame };
+      paintPanel();
+    });
+  }
 }
 
 function pick(id) {
@@ -209,6 +220,26 @@ function paintPanel() {
           (edge.code ? row(t('code'), '<code>' + escapeHtml(edge.code) + '</code>') : '') +
           (edge.note ? row(t('note'), escapeHtml(edge.note)) : '') + '</dl>');
     bindPanel(edge, 'edge');
+    return;
+  }
+
+  if (selection.type === 'frame') {
+    const frame = (model.frames || []).filter(function (entry) { return entry.id === selection.id; })[0];
+    if (!frame) { selection = null; panel.classList.remove('open'); return; }
+    const held = model.edges.filter(function (edge) { return edge.frame === frame.id; });
+    panel.innerHTML =
+      '<h2>' + escapeHtml(frame.kind) + '</h2><div class="muted">' + escapeHtml(frame.label || frame.id) + '</div>' +
+      (editing
+        ? '<div class="form">' +
+          field(t('kind'), 'kind', frame.kind, ['loop', 'alt', 'opt', 'par']) +
+          field(t('labelField'), 'label', frame.label) +
+          '<div class="actions">' +
+          '<button data-act="branch">' + t('addBranch') + '</button>' +
+          '<button data-act="drop">' + t('remove') + '</button>' +
+          '</div></div>'
+        : '') +
+      '<dl>' + row(t('messages'), String(held.length)) + '</dl>';
+    bindPanel(frame, 'frame');
     return;
   }
 
@@ -278,6 +309,31 @@ function bindPanel(target, type) {
       if (button.dataset.act === 'connect') {
         connecting = target.id;
         button.textContent = t('pickTarget');
+        return;
+      }
+      if (button.dataset.act === 'branch') {
+        const held = model.edges.filter(function (edge) { return edge.frame === target.id; });
+        if (!held.length) return;
+        const next = Math.max.apply(null, held.map(function (edge) { return edge.branch || 0; })) + 1;
+        held[held.length - 1].branch = next;
+        model.branches = (model.branches || []).concat([
+          { frame: target.id, index: next, label: t('newBranch'), line: 0 },
+        ]);
+        commit();
+        return;
+      }
+      if (type === 'frame') {
+        const parent = target.parent || '';
+        for (const edge of model.edges) {
+          if (edge.frame === target.id) { edge.frame = parent; edge.branch = 0; }
+        }
+        for (const frame of model.frames || []) {
+          if (frame.parent === target.id) frame.parent = parent;
+        }
+        model.frames = (model.frames || []).filter(function (entry) { return entry.id !== target.id; });
+        model.branches = (model.branches || []).filter(function (entry) { return entry.frame !== target.id; });
+        selection = null;
+        commit();
         return;
       }
       if (type === 'group') {

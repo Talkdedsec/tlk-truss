@@ -3,6 +3,7 @@ import { measure, metrics } from './place.mjs';
 export const sequenceMetrics = {
   framePad: 20,
   frameHead: 38,
+  branchGap: 26,
   barWidth: 11,
   headHeight: 52,
   headGap: 56,
@@ -41,6 +42,8 @@ export function layoutSequence(model) {
 
   let depth = top;
   let standing = [];
+  let standingFrame = '';
+  let standingBranch = 0;
   const messages = model.edges.map((edge, index) => {
     const wanted = chainOf(edge.frame);
     let shared = 0;
@@ -49,7 +52,12 @@ export function layoutSequence(model) {
     }
     depth += (standing.length - shared) * sequenceMetrics.framePad;
     depth += (wanted.length - shared) * sequenceMetrics.frameHead;
+    if (edge.frame && edge.frame === standingFrame && (edge.branch ?? 0) !== standingBranch) {
+      depth += sequenceMetrics.branchGap;
+    }
     standing = wanted;
+    standingFrame = edge.frame ?? '';
+    standingBranch = edge.branch ?? 0;
     const from = laneOf.get(edge.from);
     const to = laneOf.get(edge.to);
     const self = edge.from === edge.to;
@@ -59,6 +67,7 @@ export function layoutSequence(model) {
       to: edge.to,
       label: edge.label,
       frame: edge.frame ?? '',
+      branch: edge.branch ?? 0,
       note: edge.note ?? '',
       style: edge.style,
       self,
@@ -91,6 +100,19 @@ export function layoutSequence(model) {
         sequenceMetrics.framePad - inset;
       const firstY = Math.min(...inside.map((message) => message.y));
       const lastY = Math.max(...inside.map((message) => message.y + message.drop));
+      const dividers = (model.branches ?? [])
+        .filter((branch) => branch.frame === frame.id)
+        .map((branch) => {
+          const opening = inside.filter((message) => message.branch === branch.index);
+          if (!opening.length) return null;
+          const previous = inside.filter((message) => message.branch < branch.index);
+          const above = previous.length
+            ? Math.max(...previous.map((message) => message.y + message.drop))
+            : firstY;
+          const below = Math.min(...opening.map((message) => message.y));
+          return { y: (above + below) / 2 - 4, label: branch.label };
+        })
+        .filter(Boolean);
       return {
         id: frame.id,
         kind: frame.kind,
@@ -99,6 +121,7 @@ export function layoutSequence(model) {
         y: firstY - sequenceMetrics.frameHead - 8,
         w: right - left,
         h: lastY - firstY + sequenceMetrics.frameHead + sequenceMetrics.framePad + 8,
+        dividers,
       };
     })
     .filter(Boolean);

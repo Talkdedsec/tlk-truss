@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0] - 2026-09-17
+
+### Added
+
+- `else "otherwise"` divides a sequence block into branches, drawn with a dashed divider and the
+  branch name; `alt` and `par` finally mean what they say. Turkish: `yoksa`.
+- Blocks are editable on the canvas: retype one, give it a branch, or remove it and keep its
+  messages.
+- The README says how big a diagram this engine will carry, with measured numbers rather than a
+  promise.
+
+### Changed
+
+- The publish workflow runs by hand until npm knows this repository as a trusted publisher, so a
+  release no longer ends in a red cross it cannot avoid.
+
 ## [0.3.1] - 2026-09-16
 
 ### Fixed
@@ -58,6 +74,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   diagrams.
 - A browser runner built on the debugging protocol, used by the page tests.
 
+[0.4.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.4.0
 [0.3.1]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.3.1
 [0.3.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Talkdedsec/tlk-truss/releases/tag/v0.2.0
