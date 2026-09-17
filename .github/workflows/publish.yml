@@ -1,8 +1,9 @@
 name: publish
 
+# Run by hand. Add a release trigger once npmjs.com knows this repository and
+# this workflow as a trusted publisher; until then a release has no way to
+# authenticate and every tag would end in a red cross.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:

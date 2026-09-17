@@ -127,7 +127,7 @@ bir CI işinin ihtiyacı olan tek şey bu:
 Hazır bir action da var:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.3.0
+- uses: Talkdedsec/tlk-truss@v0.3.1
   with:
     sources: docs/*.truss
     uncovered: true
