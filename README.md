@@ -21,9 +21,9 @@ Turkish: [README.tr.md](README.tr.md)
 
 ## Status
 
-v0.1 work in progress, feature complete and tested: four views, the measured layout engine, the
-single-file HTML output with live editing, the drift gate, exporters and Mermaid import. What is
-left is packaging — CI, the published demo and the npm release.
+v0.4.0, published and in use here. Four views, the measured layout engine, single-file HTML output
+with live editing, the drift gate, exporters, Mermaid import and a watch mode — covered by 83 unit
+tests and 8 that drive the page in a real browser, on Windows and Linux, Node 20, 22 and 24.
 
 ## What it looks like
 
