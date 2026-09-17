@@ -127,7 +127,7 @@ which is all a CI job needs:
 There is an action for it as well:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.3.0
+- uses: Talkdedsec/tlk-truss@v0.3.1
   with:
     sources: docs/*.truss
     uncovered: true
