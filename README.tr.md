@@ -21,9 +21,9 @@ English: [README.md](README.md)
 
 ## Durum
 
-v0.1 sürüyor; özellikleri tamam ve test edildi: dört görünüm, ölçülü yerleşim motoru, tek dosyalık
-HTML çıktısı ve içindeki canlı düzenleme, sapma kapısı, dışa aktarıcılar ve Mermaid içe aktarma.
-Kalan iş paketleme — CI, yayınlanan demo ve npm sürümü.
+v0.4.0 yayında ve burada kullanılıyor. Dört görünüm, ölçülü yerleşim motoru, canlı düzenlenebilen
+tek dosyalık HTML çıktısı, sapma kapısı, dışa aktarıcılar, Mermaid içe aktarma ve izleme kipi —
+83 birim testi ve sayfayı gerçek tarayıcıda süren 8 test; Windows+Linux, Node 20, 22, 24.
 
 ## Nasıl görünüyor
 
