@@ -139,3 +139,58 @@ test('a group can be created, filled, renamed and removed from the canvas', asyn
   assert.equal(/in=g1/.test(removed.source), false);
   assert.deepEqual(page.problems, []);
 });
+
+test('a block can be retyped, given a branch and removed from the canvas', async () => {
+  const built = await page.session.evaluate(`
+    (function () {
+      const box = document.getElementById('sourceText');
+      box.value = [
+        'title T', 'view sequence', 'node a "A"', 'node b "B"',
+        'block loop "twice"', 'a -> b : one', 'b -> a : two', 'end',
+      ].join(String.fromCharCode(10));
+      document.getElementById('applySource').click();
+      document.querySelector('.frame').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      return [...document.querySelectorAll('#panel [data-field]')].map(function (i) { return i.dataset.field; }).join(',');
+    })()
+  `);
+  assert.equal(built, 'kind,label');
+
+  const retyped = await page.session.evaluate(`
+    (function () {
+      const kind = document.querySelector('#panel [data-field="kind"]');
+      kind.value = 'alt';
+      kind.dispatchEvent(new Event('change', { bubbles: true }));
+      return document.querySelector('.frame .tag').textContent;
+    })()
+  `);
+  assert.equal(retyped, 'alt');
+
+  const branched = await page.session.evaluate(`
+    (function () {
+      document.querySelector('.frame').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.querySelector('#panel [data-act="branch"]').click();
+      return {
+        dividers: document.querySelectorAll('.frame .divider').length,
+        source: document.getElementById('sourceText').value,
+      };
+    })()
+  `);
+  assert.equal(branched.dividers, 1);
+  assert.match(branched.source, /else/);
+
+  const removed = await page.session.evaluate(`
+    (function () {
+      document.querySelector('.frame').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.querySelector('#panel [data-act="drop"]').click();
+      return {
+        frames: document.querySelectorAll('.frame').length,
+        messages: document.querySelectorAll('.edge').length,
+        source: document.getElementById('sourceText').value,
+      };
+    })()
+  `);
+  assert.equal(removed.frames, 0);
+  assert.equal(removed.messages, 2, 'the messages outlive the block');
+  assert.equal(/block /.test(removed.source), false);
+  assert.deepEqual(page.problems, []);
+});

@@ -208,3 +208,74 @@ test('the Turkish block words mean the same thing', () => {
   assert.equal(diagram.frames[0].kind, 'loop');
   assert.equal(diagram.frames[0].label, 'tekrar');
 });
+
+test('an else splits a block into branches with a divider between them', () => {
+  const { diagram } = compile(`
+view sequence
+node a "A"
+node b "B"
+block alt "declined"
+a -> b : refuse
+else "approved"
+a -> b : accept
+end
+`);
+  const frame = diagram.frames[0];
+  assert.equal(frame.dividers.length, 1);
+  assert.equal(frame.dividers[0].label, 'approved');
+  const [first, second] = diagram.messages;
+  assert.equal(first.branch, 0);
+  assert.equal(second.branch, 1);
+  assert.ok(first.y < frame.dividers[0].y, 'the first branch sits above the divider');
+  assert.ok(second.y > frame.dividers[0].y, 'the second below it');
+  assert.ok(frame.dividers[0].y > frame.y && frame.dividers[0].y < frame.y + frame.h);
+});
+
+test('several branches each get their own divider, in order', () => {
+  const { diagram } = compile(`
+view sequence
+node a "A"
+node b "B"
+block par "fan out"
+a -> b : one
+else "two"
+a -> b : two
+else "three"
+a -> b : three
+end
+`);
+  const dividers = diagram.frames[0].dividers;
+  assert.deepEqual(dividers.map((entry) => entry.label), ['two', 'three']);
+  assert.ok(dividers[1].y > dividers[0].y);
+});
+
+test('an else outside a block is refused', () => {
+  const { diagnostics } = compile('view sequence\nnode a "A"\nnode b "B"\na -> b\nelse "x"');
+  assert.equal(diagnostics[0].code, 'E112');
+});
+
+test('branches survive being written back to source', async () => {
+  const { toSource } = await import('../src/source.mjs');
+  const first = compile(`
+view sequence
+node a "A"
+node b "B"
+block alt "one"
+a -> b : x
+else "two"
+a -> b : y
+end
+`);
+  const text = toSource(first.model);
+  assert.match(text, /else "two"/);
+  const second = compile(text);
+  assert.equal(second.model.branches.length, 1);
+  assert.deepEqual(second.model.edges.map((edge) => edge.branch), [0, 1]);
+});
+
+test('the Turkish else means the same thing', () => {
+  const { diagram } = compile(
+    'gorunum sekans\nnode a "A"\nnode b "B"\nblok secenek "bir"\na -> b : x\nyoksa "iki"\na -> b : y\nson',
+  );
+  assert.equal(diagram.frames[0].dividers[0].label, 'iki');
+});

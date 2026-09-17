@@ -39,6 +39,10 @@ const catalog = {
     en: ({ token, hint }) => `unknown block "${token}"; known blocks: ${hint}`,
     tr: ({ token, hint }) => `bilinmeyen blok "${token}"; bilinen bloklar: ${hint}`,
   },
+  E112: {
+    en: () => 'else without an open block',
+    tr: () => 'açık blok yokken else',
+  },
   E110: {
     en: ({ token }) => `"${token}" is not a key=value attribute`,
     tr: ({ token }) => `"${token}" anahtar=değer biçiminde değil`,

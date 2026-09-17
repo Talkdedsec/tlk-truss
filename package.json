@@ -1,6 +1,6 @@
 {
   "name": "@talkdedsec/tlk-truss",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Architecture diagrams bound to real code \u2014 text in, single-file HTML out, CI fails when the drawing drifts.",
   "license": "PolyForm-Noncommercial-1.0.0",
   "author": "Talkdedsec",

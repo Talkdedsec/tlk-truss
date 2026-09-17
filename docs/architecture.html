@@ -32,6 +32,8 @@ svg { touch-action: none; }
 .group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }
 body.editing .group rect { cursor: pointer; }
 body.editing .group rect:hover { stroke: var(--line-strong); }
+body.editing .frame .outline { cursor: pointer; }
+body.editing .frame .outline:hover { stroke: var(--line-strong); }
 .group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .node .body { fill: var(--surface); stroke: var(--line); }
 .node polygon.body { fill: var(--surface); stroke: var(--line); }
@@ -55,6 +57,8 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .frame .tab { fill: var(--raised); stroke: var(--line); }
 .frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }
 .frame .caption { fill: var(--muted); font-size: 11px; }
+.frame .divider { stroke: var(--line); stroke-dasharray: 5 4; }
+.frame .chip { fill: var(--canvas); }
 .note path { fill: var(--raised); stroke: var(--line); }
 .note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }
@@ -231,7 +235,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 </main>
 <footer id="stats"></footer>
 </div>
-<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"payment-platform","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.frame .outline { fill: none; stroke: var(--line); }\n.frame .tab { fill: var(--raised); stroke: var(--line); }\n.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }\n.frame .caption { fill: var(--muted); font-size: 11px; }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Payment Platform\nview   architecture\n\ngroup edge \"Edge\"\ngroup core \"Core services\"\ngroup data \"Data\"\n\nnode web \"Storefront\" in=edge kind=client code=src/**\nnode cdn \"CDN\" in=edge kind=infra\nnode api \"API Gateway\" in=core code=src/cli.mjs\nnode pay \"Payment\" in=core code=src/commands/*.mjs\nnode ledger \"Ledger\" in=core code=src/model.mjs\nnode bus \"Event bus\" in=core kind=queue code=src/layout/*.mjs\nnode db \"Postgres\" in=data kind=store code=package.json\nnode bank \"Acquirer\" kind=external note=\"third party, no code of ours\"\n\nweb -> cdn : assets\nweb -> api : REST\ncdn -> api\napi -> pay : charge\npay -> ledger : post entry\npay ~> bus : payment.captured\nbus ~> ledger\nledger -> db : \"writes entries\" code=src/glob.mjs\npay -> bank : authorise\nbank ~> pay : webhook\n"};</script>
+<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","addBranch":"Add branch","newBranch":"else","messages":"Messages","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","addBranch":"Dal ekle","newBranch":"yoksa","messages":"Mesajlar","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"payment-platform","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\nbody.editing .frame .outline { cursor: pointer; }\nbody.editing .frame .outline:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.frame .outline { fill: none; stroke: var(--line); }\n.frame .tab { fill: var(--raised); stroke: var(--line); }\n.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }\n.frame .caption { fill: var(--muted); font-size: 11px; }\n.frame .divider { stroke: var(--line); stroke-dasharray: 5 4; }\n.frame .chip { fill: var(--canvas); }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Payment Platform\nview   architecture\n\ngroup edge \"Edge\"\ngroup core \"Core services\"\ngroup data \"Data\"\n\nnode web \"Storefront\" in=edge kind=client code=src/**\nnode cdn \"CDN\" in=edge kind=infra\nnode api \"API Gateway\" in=core code=src/cli.mjs\nnode pay \"Payment\" in=core code=src/commands/*.mjs\nnode ledger \"Ledger\" in=core code=src/model.mjs\nnode bus \"Event bus\" in=core kind=queue code=src/layout/*.mjs\nnode db \"Postgres\" in=data kind=store code=package.json\nnode bank \"Acquirer\" kind=external note=\"third party, no code of ours\"\n\nweb -> cdn : assets\nweb -> api : REST\ncdn -> api\napi -> pay : charge\npay -> ledger : post entry\npay ~> bus : payment.captured\nbus ~> ledger\nledger -> db : \"writes entries\" code=src/glob.mjs\npay -> bank : authorise\nbank ~> pay : webhook\n"};</script>
 <script>window.__trussEngine = (function () {
 const directives = new Map([
   ['title', 'title'],
@@ -355,6 +359,7 @@ function parse(source, { path = '<source>' } = {}) {
     nodes: [],
     edges: [],
     frames: [],
+    branches: [],
   };
 
   const open = [];
@@ -386,6 +391,20 @@ function parse(source, { path = '<source>' } = {}) {
 
     if (head === 'block' || head === 'blok') {
       readFrame(tokens.slice(1), lineNumber);
+      continue;
+    }
+    if (head === 'else' || head === 'yoksa') {
+      if (!open.length) report('E112', lineNumber);
+      else {
+        const frame = open[open.length - 1];
+        frame.branches += 1;
+        spec.branches.push({
+          frame: frame.id,
+          index: frame.branches,
+          label: tokens[1] ? unquote(tokens.slice(1).join(' ')) : '',
+          line: lineNumber,
+        });
+      }
       continue;
     }
     if (head === 'end' || head === 'son') {
@@ -426,6 +445,7 @@ function parse(source, { path = '<source>' } = {}) {
       label: rest[1] ? unquote(rest.slice(1).join(' ')) : '',
       depth: open.length,
       parent: open.length ? open[open.length - 1].id : '',
+      branches: 0,
       line,
     };
     spec.frames.push(frame);
@@ -501,6 +521,7 @@ function parse(source, { path = '<source>' } = {}) {
       label: edgeLabel,
       style: arrows.get(arrow),
       frame: open.length ? open[open.length - 1].id : '',
+      branch: open.length ? open[open.length - 1].branches : 0,
       line,
       ...attrs,
     });
@@ -642,6 +663,7 @@ function build(spec) {
       note: entry.note ?? '',
       code: entry.code ?? '',
       frame: entry.frame ?? '',
+      branch: entry.branch ?? 0,
       line: entry.line,
     });
   }
@@ -664,6 +686,7 @@ function build(spec) {
       nodes,
       edges,
       frames: kept === 'sequence' ? frames : [],
+      branches: kept === 'sequence' ? (spec.branches ?? []) : [],
       frameIndex: new Map(frames.map((frame) => [frame.id, frame])),
       nodeIndex,
     },
@@ -713,7 +736,12 @@ function toSource(model) {
     }
     return chain;
   };
+  const branchOf = new Map();
+  for (const branch of model.branches ?? []) {
+    branchOf.set(`${branch.frame}#${branch.index}`, branch.label);
+  }
   let openFrames = [];
+  let branchSeen = new Map();
   const indent = () => '  '.repeat(openFrames.length);
 
   for (const edge of model.edges) {
@@ -734,6 +762,14 @@ function toSource(model) {
       const frame = wanted[i];
       lines.push(`${indent()}block ${frame.kind}${frame.label ? ` ${quote(frame.label)}` : ''}`);
       openFrames.push(frame);
+      branchSeen.set(frame.id, 0);
+    }
+    if (edge.frame && (edge.branch ?? 0) !== (branchSeen.get(edge.frame) ?? 0)) {
+      const label = branchOf.get(`${edge.frame}#${edge.branch}`) ?? '';
+      openFrames.pop();
+      lines.push(`${indent()}else${label ? ` ${quote(label)}` : ''}`);
+      openFrames.push(frameOf.get(edge.frame));
+      branchSeen.set(edge.frame, edge.branch);
     }
     const arrow = arrowFor[edge.style] ?? '->';
     const attrs = [
@@ -1084,6 +1120,7 @@ function place(layers, links, sizes, { passes = 6 } = {}) {
 const sequenceMetrics = {
   framePad: 20,
   frameHead: 38,
+  branchGap: 26,
   barWidth: 11,
   headHeight: 52,
   headGap: 56,
@@ -1122,6 +1159,8 @@ function layoutSequence(model) {
 
   let depth = top;
   let standing = [];
+  let standingFrame = '';
+  let standingBranch = 0;
   const messages = model.edges.map((edge, index) => {
     const wanted = chainOf(edge.frame);
     let shared = 0;
@@ -1130,7 +1169,12 @@ function layoutSequence(model) {
     }
     depth += (standing.length - shared) * sequenceMetrics.framePad;
     depth += (wanted.length - shared) * sequenceMetrics.frameHead;
+    if (edge.frame && edge.frame === standingFrame && (edge.branch ?? 0) !== standingBranch) {
+      depth += sequenceMetrics.branchGap;
+    }
     standing = wanted;
+    standingFrame = edge.frame ?? '';
+    standingBranch = edge.branch ?? 0;
     const from = laneOf.get(edge.from);
     const to = laneOf.get(edge.to);
     const self = edge.from === edge.to;
@@ -1140,6 +1184,7 @@ function layoutSequence(model) {
       to: edge.to,
       label: edge.label,
       frame: edge.frame ?? '',
+      branch: edge.branch ?? 0,
       note: edge.note ?? '',
       style: edge.style,
       self,
@@ -1172,6 +1217,19 @@ function layoutSequence(model) {
         sequenceMetrics.framePad - inset;
       const firstY = Math.min(...inside.map((message) => message.y));
       const lastY = Math.max(...inside.map((message) => message.y + message.drop));
+      const dividers = (model.branches ?? [])
+        .filter((branch) => branch.frame === frame.id)
+        .map((branch) => {
+          const opening = inside.filter((message) => message.branch === branch.index);
+          if (!opening.length) return null;
+          const previous = inside.filter((message) => message.branch < branch.index);
+          const above = previous.length
+            ? Math.max(...previous.map((message) => message.y + message.drop))
+            : firstY;
+          const below = Math.min(...opening.map((message) => message.y));
+          return { y: (above + below) / 2 - 4, label: branch.label };
+        })
+        .filter(Boolean);
       return {
         id: frame.id,
         kind: frame.kind,
@@ -1180,6 +1238,7 @@ function layoutSequence(model) {
         y: firstY - sequenceMetrics.frameHead - 8,
         w: right - left,
         h: lastY - firstY + sequenceMetrics.frameHead + sequenceMetrics.framePad + 8,
+        dividers,
       };
     })
     .filter(Boolean);
@@ -1821,6 +1880,17 @@ function renderSequence(diagram) {
         `l -9 20 H ${(frame.x + 10).toFixed(1)} a 10 10 0 0 1 -10 -10 Z"/>` +
         `<text class="tag" x="${(frame.x + 11).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(tag)}</text>` +
         `<text class="caption" x="${(frame.x + width + 10).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(trim(frame.label, 44))}</text>` +
+        (frame.dividers ?? [])
+          .map(
+            (divider) =>
+              `<line class="divider" x1="${frame.x.toFixed(1)}" y1="${divider.y.toFixed(1)}" ` +
+              `x2="${(frame.x + frame.w).toFixed(1)}" y2="${divider.y.toFixed(1)}"/>` +
+              `<rect class="chip" x="${(frame.x + 6).toFixed(1)}" y="${(divider.y + 4).toFixed(1)}" ` +
+              `width="${(trim(divider.label || 'else', 44).length * 6.2 + 12).toFixed(1)}" height="17" rx="5"/>` +
+              `<text class="caption" x="${(frame.x + 12).toFixed(1)}" y="${(divider.y + 16).toFixed(1)}">` +
+              `${escapeXml(trim(divider.label || 'else', 44))}</text>`,
+          )
+          .join('') +
         '</g>',
     );
   }
@@ -2068,6 +2138,17 @@ function bindScene() {
       paintPanel();
     });
   }
+
+  const blocks = svg.querySelectorAll('.frame');
+  for (let i = 0; i < blocks.length; i += 1) {
+    const element = blocks[i];
+    element.addEventListener('click', function (event) {
+      if (!editing) return;
+      event.stopPropagation();
+      selection = { type: 'frame', id: element.dataset.frame };
+      paintPanel();
+    });
+  }
 }
 
 function pick(id) {
@@ -2128,6 +2209,26 @@ function paintPanel() {
           (edge.code ? row(t('code'), '<code>' + escapeHtml(edge.code) + '</code>') : '') +
           (edge.note ? row(t('note'), escapeHtml(edge.note)) : '') + '</dl>');
     bindPanel(edge, 'edge');
+    return;
+  }
+
+  if (selection.type === 'frame') {
+    const frame = (model.frames || []).filter(function (entry) { return entry.id === selection.id; })[0];
+    if (!frame) { selection = null; panel.classList.remove('open'); return; }
+    const held = model.edges.filter(function (edge) { return edge.frame === frame.id; });
+    panel.innerHTML =
+      '<h2>' + escapeHtml(frame.kind) + '</h2><div class="muted">' + escapeHtml(frame.label || frame.id) + '</div>' +
+      (editing
+        ? '<div class="form">' +
+          field(t('kind'), 'kind', frame.kind, ['loop', 'alt', 'opt', 'par']) +
+          field(t('labelField'), 'label', frame.label) +
+          '<div class="actions">' +
+          '<button data-act="branch">' + t('addBranch') + '</button>' +
+          '<button data-act="drop">' + t('remove') + '</button>' +
+          '</div></div>'
+        : '') +
+      '<dl>' + row(t('messages'), String(held.length)) + '</dl>';
+    bindPanel(frame, 'frame');
     return;
   }
 
@@ -2197,6 +2298,31 @@ function bindPanel(target, type) {
       if (button.dataset.act === 'connect') {
         connecting = target.id;
         button.textContent = t('pickTarget');
+        return;
+      }
+      if (button.dataset.act === 'branch') {
+        const held = model.edges.filter(function (edge) { return edge.frame === target.id; });
+        if (!held.length) return;
+        const next = Math.max.apply(null, held.map(function (edge) { return edge.branch || 0; })) + 1;
+        held[held.length - 1].branch = next;
+        model.branches = (model.branches || []).concat([
+          { frame: target.id, index: next, label: t('newBranch'), line: 0 },
+        ]);
+        commit();
+        return;
+      }
+      if (type === 'frame') {
+        const parent = target.parent || '';
+        for (const edge of model.edges) {
+          if (edge.frame === target.id) { edge.frame = parent; edge.branch = 0; }
+        }
+        for (const frame of model.frames || []) {
+          if (frame.parent === target.id) frame.parent = parent;
+        }
+        model.frames = (model.frames || []).filter(function (entry) { return entry.id !== target.id; });
+        model.branches = (model.branches || []).filter(function (entry) { return entry.frame !== target.id; });
+        selection = null;
+        commit();
         return;
       }
       if (type === 'group') {

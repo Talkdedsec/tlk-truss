@@ -81,8 +81,8 @@ pay -> bank : authorise
 - `code=` is the binding: a path or a glob, several separated by commas
 - `note=` hangs a note off a node, or off a message in a sequence:
   `api -> pay : "charge" note="idempotent"`
-- in a sequence, `block loop|alt|opt|par "why"` … `end` frames the messages between them, and
-  blocks nest
+- in a sequence, `block loop|alt|opt|par "why"` … `else "otherwise"` … `end` frames the messages
+  between them; blocks nest and branches are divided
 - `#` starts a comment
 
 Every keyword also has a Turkish spelling (`baslik`, `grup`, `dugum`, `icinde=`, `tur=`, `kod=`),
@@ -127,7 +127,7 @@ which is all a CI job needs:
 There is an action for it as well:
 
 ```yaml
-- uses: Talkdedsec/tlk-truss@v0.3.1
+- uses: Talkdedsec/tlk-truss@v0.4.0
   with:
     sources: docs/*.truss
     uncovered: true
@@ -160,6 +160,21 @@ The layout is automatic and always is: cycles are broken, layers assigned, order
 median heuristic, crossings counted with a Fenwick tree, coordinates relaxed towards straight lines,
 and group boxes pushed clear of nodes that do not belong to them. There are no manual coordinates in
 the source language, because a diagram you have to hand-place is a diagram nobody updates.
+
+## How big a diagram it will take
+
+Measured on this engine, a tree with cross links, layered top to bottom:
+
+| nodes | connections | layers | crossings | time |
+|---|---|---|---|---|
+| 30 | 39 | 8 | 10 | 7 ms |
+| 60 | 84 | 13 | 48 | 9 ms |
+| 120 | 179 | 25 | 382 | 28 ms |
+| 250 | 369 | 47 | 1458 | 93 ms |
+
+Speed is never the problem; legibility is. Past roughly thirty nodes the picture stops explaining
+anything, and no layout engine fixes that — split the story into several diagrams instead, or reach
+for a tool that maps a whole repository rather than one idea.
 
 ## As a library
 

@@ -20,6 +20,9 @@ const ui = {
     addGroup: 'Add group',
     newGroup: 'New group',
     members: 'Members',
+    addBranch: 'Add branch',
+    newBranch: 'else',
+    messages: 'Messages',
     apply: 'Apply',
     save: 'Save .truss',
     kind: 'Kind',
@@ -50,6 +53,9 @@ const ui = {
     addGroup: 'Grup ekle',
     newGroup: 'Yeni grup',
     members: 'Üyeler',
+    addBranch: 'Dal ekle',
+    newBranch: 'yoksa',
+    messages: 'Mesajlar',
     apply: 'Uygula',
     save: '.truss kaydet',
     kind: 'Tür',
@@ -88,6 +94,8 @@ export const svgStyles = `
 .group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }
 body.editing .group rect { cursor: pointer; }
 body.editing .group rect:hover { stroke: var(--line-strong); }
+body.editing .frame .outline { cursor: pointer; }
+body.editing .frame .outline:hover { stroke: var(--line-strong); }
 .group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .node .body { fill: var(--surface); stroke: var(--line); }
 .node polygon.body { fill: var(--surface); stroke: var(--line); }
@@ -111,6 +119,8 @@ body.editing .group rect:hover { stroke: var(--line-strong); }
 .frame .tab { fill: var(--raised); stroke: var(--line); }
 .frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }
 .frame .caption { fill: var(--muted); font-size: 11px; }
+.frame .divider { stroke: var(--line); stroke-dasharray: 5 4; }
+.frame .chip { fill: var(--canvas); }
 .note path { fill: var(--raised); stroke: var(--line); }
 .note text { fill: var(--muted); font-size: 11px; }
 .pip { fill: var(--line-strong); }

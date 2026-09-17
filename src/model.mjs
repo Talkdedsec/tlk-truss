@@ -133,6 +133,7 @@ export function build(spec) {
       note: entry.note ?? '',
       code: entry.code ?? '',
       frame: entry.frame ?? '',
+      branch: entry.branch ?? 0,
       line: entry.line,
     });
   }
@@ -155,6 +156,7 @@ export function build(spec) {
       nodes,
       edges,
       frames: kept === 'sequence' ? frames : [],
+      branches: kept === 'sequence' ? (spec.branches ?? []) : [],
       frameIndex: new Map(frames.map((frame) => [frame.id, frame])),
       nodeIndex,
     },

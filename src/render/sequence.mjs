@@ -26,6 +26,17 @@ export function renderSequence(diagram) {
         `l -9 20 H ${(frame.x + 10).toFixed(1)} a 10 10 0 0 1 -10 -10 Z"/>` +
         `<text class="tag" x="${(frame.x + 11).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(tag)}</text>` +
         `<text class="caption" x="${(frame.x + width + 10).toFixed(1)}" y="${(frame.y + 15).toFixed(1)}">${escapeXml(trim(frame.label, 44))}</text>` +
+        (frame.dividers ?? [])
+          .map(
+            (divider) =>
+              `<line class="divider" x1="${frame.x.toFixed(1)}" y1="${divider.y.toFixed(1)}" ` +
+              `x2="${(frame.x + frame.w).toFixed(1)}" y2="${divider.y.toFixed(1)}"/>` +
+              `<rect class="chip" x="${(frame.x + 6).toFixed(1)}" y="${(divider.y + 4).toFixed(1)}" ` +
+              `width="${(trim(divider.label || 'else', 44).length * 6.2 + 12).toFixed(1)}" height="17" rx="5"/>` +
+              `<text class="caption" x="${(frame.x + 12).toFixed(1)}" y="${(divider.y + 16).toFixed(1)}">` +
+              `${escapeXml(trim(divider.label || 'else', 44))}</text>`,
+          )
+          .join('') +
         '</g>',
     );
   }
