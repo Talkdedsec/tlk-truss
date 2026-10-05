@@ -81,6 +81,12 @@ export function run(argv, io = console) {
     typeof flags.lang === 'string' ? flags.lang : typeof flags.dil === 'string' ? flags.dil : undefined,
   );
   const s = strings(lang);
+  // A drawn page gets a fixed language only when the author asks for one with
+  // --lang; otherwise each reader's browser decides. TRUSS_LANG only sets the
+  // language of the CLI's own messages.
+  const requested =
+    typeof flags.lang === 'string' ? flags.lang : typeof flags.dil === 'string' ? flags.dil : undefined;
+  const pageLang = requested ? resolveLanguage(requested, {}) : undefined;
 
   if (flags.version || flags.v) {
     io.log(version());
@@ -111,6 +117,7 @@ export function run(argv, io = console) {
     out: typeof flags.out === 'string' ? flags.out : typeof flags.o === 'string' ? flags.o : '',
     root: typeof flags.root === 'string' ? flags.root : typeof flags.kok === 'string' ? flags.kok : '',
     lang,
+    pageLang,
     json: Boolean(flags.json),
     ci: Boolean(flags.ci),
     strict: Boolean(flags.strict || flags.kati),

@@ -54,6 +54,22 @@ test('draw writes a self contained page and reports the crossing count', () => {
   rmSync(root, { recursive: true, force: true });
 });
 
+test('draw fixes the page language only when --lang is given', () => {
+  const { root, source } = sample('node a "A"\nnode b "B"\na -> b\n');
+  const saved = process.env.TRUSS_LANG;
+  process.env.TRUSS_LANG = 'tr'; // the author's CLI language, not the readers'
+  try {
+    capture(['draw', source, '--out', join(root, 'auto.html')]);
+    capture(['draw', source, '--out', join(root, 'fixed.html'), '--lang', 'tr']);
+  } finally {
+    if (saved === undefined) delete process.env.TRUSS_LANG;
+    else process.env.TRUSS_LANG = saved;
+  }
+  assert.match(readFileSync(join(root, 'auto.html'), 'utf8'), /"lang":null/);
+  assert.match(readFileSync(join(root, 'fixed.html'), 'utf8'), /"lang":"tr"/);
+  rmSync(root, { recursive: true, force: true });
+});
+
 test('draw refuses a source with errors and touches no output', () => {
   const { root, source } = sample('node a "A"\na -> ghost\n');
   const result = capture(['draw', source, '--out', join(root, 'demo.html')]);

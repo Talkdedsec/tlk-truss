@@ -182,14 +182,19 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 }
 `;
 
-export function renderPage(diagram, model, { lang = 'en' } = {}) {
+/**
+ * lang fixes the page language. Leave it out and the page opens in the reader's
+ * browser language (English or Turkish); a reader's own pick is remembered.
+ */
+export function renderPage(diagram, model, { lang } = {}) {
+  const shown = lang ?? 'en';
   const svg = renderDiagram(diagram, model);
   const slug =
     (model.title || 'diagram').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') ||
     'diagram';
 
   const payload = {
-    lang,
+    lang: lang ?? null,
     ui,
     names: statLabels,
     kinds,
@@ -199,7 +204,7 @@ export function renderPage(diagram, model, { lang = 'en' } = {}) {
   };
 
   return `<!doctype html>
-<html lang="${lang}" data-theme="${model.theme === 'light' ? 'light' : 'dark'}">
+<html lang="${shown}" data-theme="${model.theme === 'light' ? 'light' : 'dark'}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -235,8 +240,8 @@ ${styles}
 <div id="sourceBox">
   <textarea id="sourceText" spellcheck="false"></textarea>
   <div class="actions">
-    <button id="applySource">${ui[lang].apply}</button>
-    <button id="saveSource">${ui[lang].save}</button>
+    <button id="applySource">${ui[shown].apply}</button>
+    <button id="saveSource">${ui[shown].save}</button>
   </div>
 </div>
 <div id="flash"></div>

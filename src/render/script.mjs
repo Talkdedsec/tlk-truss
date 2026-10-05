@@ -1,7 +1,15 @@
 export const pageScript = String.raw`
 const data = window.__truss;
 const engine = window.__trussEngine;
-let lang = data.lang;
+// The reader's saved pick, else the language the author fixed, else the browser's.
+let lang = (function () {
+  try {
+    const saved = localStorage.getItem('truss-lang');
+    if (saved === 'en' || saved === 'tr') return saved;
+  } catch (error) { void error; }
+  if (data.lang) return data.lang;
+  return /^tr\b/i.test(navigator.language || '') ? 'tr' : 'en';
+})();
 let source = data.source;
 let model = null;
 let diagram = null;
@@ -399,6 +407,7 @@ function paintFooter() {
 function paintChrome() {
   document.getElementById('search').placeholder = t('search');
   document.getElementById('fit').textContent = t('fit');
+  document.documentElement.lang = lang;
   document.getElementById('lang').textContent = lang.toUpperCase();
   document.getElementById('theme').textContent = t('theme');
   document.getElementById('edit').textContent = editing ? t('editing') : t('edit');
@@ -429,6 +438,7 @@ document.getElementById('theme').addEventListener('click', function () {
 
 document.getElementById('lang').addEventListener('click', function () {
   lang = lang === 'en' ? 'tr' : 'en';
+  try { localStorage.setItem('truss-lang', lang); } catch (error) { void error; }
   paintChrome();
   paintPanel();
 });

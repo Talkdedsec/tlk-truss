@@ -6,7 +6,7 @@ import { renderPage } from '../render/page.mjs';
 import { format, countErrors } from '../diagnostics.mjs';
 import { strings, statName } from '../i18n.mjs';
 
-export function draw({ source, out, lang, json }, io) {
+export function draw({ source, out, lang, pageLang, json }, io) {
   const s = strings(lang);
   if (!source) {
     io.error(s.needSource);
@@ -21,7 +21,7 @@ export function draw({ source, out, lang, json }, io) {
 
   const diagram = layout(model);
   const target = out || join(dirname(path), `${basename(path).replace(/\.truss$/i, '')}.html`);
-  writeFileSync(target, renderPage(diagram, model, { lang }), 'utf8');
+  writeFileSync(target, renderPage(diagram, model, { lang: pageLang }), 'utf8');
 
   if (json) {
     io.log(JSON.stringify({ output: target, view: model.view, ...diagram.stats }, null, 2));
