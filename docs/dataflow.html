@@ -204,7 +204,7 @@ footer b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-n
 </main>
 <footer id="stats"></footer>
 </div>
-<script>window.__truss = {"lang":"en","ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","addBranch":"Add branch","newBranch":"else","messages":"Messages","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","addBranch":"Dal ekle","newBranch":"yoksa","messages":"Mesajlar","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"click-stream-pipeline","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\nbody.editing .frame .outline { cursor: pointer; }\nbody.editing .frame .outline:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.frame .outline { fill: none; stroke: var(--line); }\n.frame .tab { fill: var(--raised); stroke: var(--line); }\n.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }\n.frame .caption { fill: var(--muted); font-size: 11px; }\n.frame .divider { stroke: var(--line); stroke-dasharray: 5 4; }\n.frame .chip { fill: var(--canvas); }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Click stream pipeline\nview   dataflow\n\nnode app \"Web app\" kind=source code=src/cli.mjs\nnode collect \"Collector\" kind=transform code=src/parse.mjs\nnode raw \"Raw bucket\" kind=store code=examples/*.truss\nnode enrich \"Enrichment\" kind=transform code=src/model.mjs\nnode warehouse \"Warehouse\" kind=store code=src/layout/*.mjs\nnode report \"Daily report\" kind=sink code=src/render/*.mjs\n\napp -> collect : click events\ncollect -> raw : untouched copy\ncollect -> enrich : validated batch\nenrich -> warehouse : session rows\nwarehouse -> report : aggregate\nraw ~> enrich : replay\n"};</script>
+<script>window.__truss = {"lang":null,"ui":{"en":{"search":"Search nodes","fit":"Fit","theme":"Theme","edit":"Edit","editing":"Editing","source":"Source","addNode":"Add node","newNode":"New node","addGroup":"Add group","newGroup":"New group","members":"Members","addBranch":"Add branch","newBranch":"else","messages":"Messages","apply":"Apply","save":"Save .truss","kind":"Kind","group":"Group","code":"Code binding","note":"Note","link":"Link","label":"Label","labelField":"Label","style":"Style","remove":"Remove","connect":"Connect to…","pickTarget":"pick a target","inbound":"Inbound","outbound":"Outbound","none":"none","unbound":"not bound to code"},"tr":{"search":"Düğüm ara","fit":"Sığdır","theme":"Tema","edit":"Düzenle","editing":"Düzenleniyor","source":"Kaynak","addNode":"Düğüm ekle","newNode":"Yeni düğüm","addGroup":"Grup ekle","newGroup":"Yeni grup","members":"Üyeler","addBranch":"Dal ekle","newBranch":"yoksa","messages":"Mesajlar","apply":"Uygula","save":".truss kaydet","kind":"Tür","group":"Grup","code":"Kod bağı","note":"Not","link":"Bağlantı","label":"Etiket","labelField":"Etiket","style":"Biçim","remove":"Sil","connect":"Şuna bağla…","pickTarget":"hedefi seç","inbound":"Gelen","outbound":"Giden","none":"yok","unbound":"koda bağlı değil"}},"names":{"nodes":{"en":"nodes","tr":"düğüm"},"edges":{"en":"connections","tr":"bağlantı"},"layers":{"en":"layers","tr":"katman"},"crossings":{"en":"crossings","tr":"kesişme"},"participants":{"en":"participants","tr":"katılımcı"},"messages":{"en":"messages","tr":"mesaj"},"states":{"en":"states","tr":"durum"},"transitions":{"en":"transitions","tr":"geçiş"},"stages":{"en":"stages","tr":"aşama"},"bound":{"en":"bound to code","tr":"koda bağlı"}},"kinds":["service","store","queue","infra","client","external","job","source","transform","sink","state","start","terminal","failure"],"slug":"click-stream-pipeline","svgStyles":"\n.group rect { fill: none; stroke: var(--line); stroke-dasharray: 5 5; }\nbody.editing .group rect { cursor: pointer; }\nbody.editing .group rect:hover { stroke: var(--line-strong); }\nbody.editing .frame .outline { cursor: pointer; }\nbody.editing .frame .outline:hover { stroke: var(--line-strong); }\n.group text { fill: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }\n.node .body { fill: var(--surface); stroke: var(--line); }\n.node polygon.body { fill: var(--surface); stroke: var(--line); }\n.node polygon.slanted { stroke-width: 1.6; }\n.node .label { fill: var(--text); font-size: 13px; font-weight: 550; }\n.node .code { fill: var(--muted); font-size: 10px;\n  font-family: ui-monospace, \"Cascadia Mono\", Consolas, monospace; }\n.node { cursor: pointer; }\n.node:hover .body, .node:focus .body { stroke: var(--line-strong); }\n.edge .stroke { fill: none; stroke: var(--line-strong); stroke-width: 1.6; opacity: .75; }\n.edge .hit { fill: none; stroke: transparent; stroke-width: 14; }\n.edge.async .stroke { stroke-dasharray: 6 5; }\n.edge-label rect { fill: var(--canvas); stroke: var(--line); }\n.edge-label text { fill: var(--muted); font-size: 11px; }\n.faded { opacity: .12; }\n.lit .stroke { stroke: #4c9aff; opacity: 1; stroke-width: 2.2; }\n.lifeline { stroke: var(--line); stroke-dasharray: 4 6; }\n.message-label { fill: var(--text); font-size: 11.5px; }\n.bar { fill: var(--raised); stroke: var(--line-strong); stroke-width: .9; }\n.frame .outline { fill: none; stroke: var(--line); }\n.frame .tab { fill: var(--raised); stroke: var(--line); }\n.frame .tag { fill: var(--text); font-size: 11px; font-weight: 600; }\n.frame .caption { fill: var(--muted); font-size: 11px; }\n.frame .divider { stroke: var(--line); stroke-dasharray: 5 4; }\n.frame .chip { fill: var(--canvas); }\n.note path { fill: var(--raised); stroke: var(--line); }\n.note text { fill: var(--muted); font-size: 11px; }\n.pip { fill: var(--line-strong); }\n.pip.ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }\n","source":"title  Click stream pipeline\nview   dataflow\n\nnode app \"Web app\" kind=source code=src/cli.mjs\nnode collect \"Collector\" kind=transform code=src/parse.mjs\nnode raw \"Raw bucket\" kind=store code=examples/*.truss\nnode enrich \"Enrichment\" kind=transform code=src/model.mjs\nnode warehouse \"Warehouse\" kind=store code=src/layout/*.mjs\nnode report \"Daily report\" kind=sink code=src/render/*.mjs\n\napp -> collect : click events\ncollect -> raw : untouched copy\ncollect -> enrich : validated batch\nenrich -> warehouse : session rows\nwarehouse -> report : aggregate\nraw ~> enrich : replay\n"};</script>
 <script>window.__trussEngine = (function () {
 const directives = new Map([
   ['title', 'title'],
@@ -1959,7 +1959,15 @@ return { parse, build, layout, renderDiagram, toSource };
 <script>
 const data = window.__truss;
 const engine = window.__trussEngine;
-let lang = data.lang;
+// The reader's saved pick, else the language the author fixed, else the browser's.
+let lang = (function () {
+  try {
+    const saved = localStorage.getItem('truss-lang');
+    if (saved === 'en' || saved === 'tr') return saved;
+  } catch (error) { void error; }
+  if (data.lang) return data.lang;
+  return /^tr\b/i.test(navigator.language || '') ? 'tr' : 'en';
+})();
 let source = data.source;
 let model = null;
 let diagram = null;
@@ -1998,6 +2006,9 @@ function apply() {
 
 function fit() {
   const box = svg.getBoundingClientRect();
+  // Not laid out yet (a lazy iframe, a hidden tab): there is nothing to fit to,
+  // and dividing by a zero box would turn the viewBox into NaN.
+  if (!box.width || !box.height) return;
   const ratio = Math.max((diagram.width + 24) / box.width, (diagram.height + 24) / box.height);
   view.w = box.width * ratio;
   view.h = box.height * ratio;
@@ -2354,6 +2365,7 @@ function paintFooter() {
 function paintChrome() {
   document.getElementById('search').placeholder = t('search');
   document.getElementById('fit').textContent = t('fit');
+  document.documentElement.lang = lang;
   document.getElementById('lang').textContent = lang.toUpperCase();
   document.getElementById('theme').textContent = t('theme');
   document.getElementById('edit').textContent = editing ? t('editing') : t('edit');
@@ -2384,6 +2396,7 @@ document.getElementById('theme').addEventListener('click', function () {
 
 document.getElementById('lang').addEventListener('click', function () {
   lang = lang === 'en' ? 'tr' : 'en';
+  try { localStorage.setItem('truss-lang', lang); } catch (error) { void error; }
   paintChrome();
   paintPanel();
 });
@@ -2515,7 +2528,9 @@ diagram = boot.diagram;
 bindScene();
 paintChrome();
 fit();
-window.addEventListener('resize', function () { fit(); });
+// Refit whenever the scene's own box changes, including the moment it first gets one.
+if (typeof ResizeObserver === 'function') new ResizeObserver(function () { fit(); }).observe(svg);
+else window.addEventListener('resize', function () { fit(); });
 </script>
 </body>
 </html>
