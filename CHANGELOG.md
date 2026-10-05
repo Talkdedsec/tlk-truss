@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- A drawn page opens in the reader's browser language, English or Turkish, and remembers the
+  reader's own pick. `--lang` on `draw` still fixes the page language; `TRUSS_LANG` now only sets
+  the language of the CLI's messages instead of being baked into every page.
+
+### Added
+- The project site's index page is available in Turkish and shares the language choice with the
+  diagram pages.
+
+### Fixed
+- A page that started without a laid-out box (a lazy iframe, a hidden tab) set its viewBox to
+  `NaN`. It now waits until the scene has a size and refits whenever the scene's box changes.
+
 ## [0.4.0] - 2026-09-17
 
 ### Added
