@@ -37,6 +37,14 @@ test('the page carries the interface text for both languages', () => {
   assert.match(html, /"lang":"tr"/);
 });
 
+test('without a fixed language the page leaves the choice to the reader', () => {
+  const html = page('node a "A"\nnode b "B"\na -> b');
+  assert.match(html, /<html lang="en"/);
+  assert.match(html, /"lang":null/);
+  assert.match(html, /navigator\.language/);
+  assert.match(html, /localStorage\.setItem\('truss-lang'/);
+});
+
 test('a code binding is drawn on the node itself', () => {
   const html = page('node a "A" code=src/a.ts\nnode b "B"\na -> b');
   assert.match(html, /class="code"[^>]*>src\/a\.ts</);

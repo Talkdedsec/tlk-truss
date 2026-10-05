@@ -124,6 +124,10 @@ which is all a CI job needs:
 - run: npx @talkdedsec/tlk-truss check docs/architecture.truss --ci
 ```
 
+A drawn page opens in the reader's browser language, English or Turkish, and remembers the
+reader's own pick. Pass `--lang` to `draw` to fix the page language instead; `TRUSS_LANG` only
+changes the language of the CLI's messages.
+
 There is an action for it as well:
 
 ```yaml

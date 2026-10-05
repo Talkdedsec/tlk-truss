@@ -124,6 +124,10 @@ bir CI işinin ihtiyacı olan tek şey bu:
 - run: npx @talkdedsec/tlk-truss denetle docs/mimari.truss --ci
 ```
 
+Çizilen sayfa okuyucunun tarayıcı dilinde, İngilizce ya da Türkçe açılır ve okuyucunun kendi
+seçimini hatırlar. Sayfa dilini sabitlemek istersen `ciz`e `--lang` ver; `TRUSS_LANG` yalnızca
+CLI mesajlarının dilini değiştirir.
+
 Hazır bir action da var:
 
 ```yaml
