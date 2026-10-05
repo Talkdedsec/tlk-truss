@@ -40,6 +40,9 @@ function apply() {
 
 function fit() {
   const box = svg.getBoundingClientRect();
+  // Not laid out yet (a lazy iframe, a hidden tab): there is nothing to fit to,
+  // and dividing by a zero box would turn the viewBox into NaN.
+  if (!box.width || !box.height) return;
   const ratio = Math.max((diagram.width + 24) / box.width, (diagram.height + 24) / box.height);
   view.w = box.width * ratio;
   view.h = box.height * ratio;
@@ -557,5 +560,7 @@ diagram = boot.diagram;
 bindScene();
 paintChrome();
 fit();
-window.addEventListener('resize', function () { fit(); });
+// Refit whenever the scene's own box changes, including the moment it first gets one.
+if (typeof ResizeObserver === 'function') new ResizeObserver(function () { fit(); }).observe(svg);
+else window.addEventListener('resize', function () { fit(); });
 `;
