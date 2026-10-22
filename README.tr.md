@@ -194,3 +194,7 @@ aktarılıyor; kendi hattını kurmak isteyen için.
 ## Lisans
 
 PolyForm Noncommercial 1.0.0 — kullanımı serbest, satışı değil. Bkz. [LICENSE](LICENSE).
+
+<p align="center">
+  <sub><a href="https://talkdedsec.com">Talkdedsec</a> tarafından yapıldı</sub>
+</p>

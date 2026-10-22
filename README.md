@@ -195,3 +195,7 @@ exported too, for anyone who wants their own pipeline.
 ## Licence
 
 PolyForm Noncommercial 1.0.0 — free to use, not to sell. See [LICENSE](LICENSE).
+
+<p align="center">
+  <sub>Built by <a href="https://talkdedsec.com">Talkdedsec</a></sub>
+</p>
