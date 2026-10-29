@@ -1,121 +1,196 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-tr="tlk-truss — gerçek koda bağlı mimari diyagramlar">tlk-truss — architecture diagrams bound to real code</title>
-<style>
-:root { --canvas:#0b0f14; --surface:#161b22; --line:#2f3742; --text:#e6edf3; --muted:#8b949e; }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--canvas); color: var(--text); padding: 0 20px 64px;
-  font: 15px/1.6 ui-sans-serif, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-main { max-width: 1040px; margin: 0 auto; }
-header { padding: 64px 0 28px; border-bottom: 1px solid var(--line); }
-h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: -.01em; }
-.lede { color: var(--muted); max-width: 62ch; margin: 0; }
-pre { background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-  padding: 14px 16px; overflow-x: auto; font-size: 13px; }
-code { font-family: ui-monospace, Consolas, monospace; }
-section { margin-top: 44px; }
-h2 { font-size: 19px; margin: 0 0 4px; }
-article { margin-top: 34px; }
-article p { color: var(--muted); margin: 0 0 12px; }
-iframe { width: 100%; height: 520px; border: 1px solid var(--line); border-radius: 12px;
-  background: var(--canvas); }
-a { color: #4c9aff; }
-article a { display: inline-block; margin-top: 8px; font-size: 14px; }
-footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line);
-  color: var(--muted); font-size: 14px; }
-@media (max-width: 640px) { iframe { height: 420px; } header { padding-top: 40px; } }
-.lang-toggle { position: fixed; top: 14px; right: 14px; z-index: 20; cursor: pointer;
-  font: 600 12px/1 ui-monospace, Consolas, monospace; letter-spacing: .08em; padding: 9px 12px;
-  border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
-.lang-toggle:hover { border-color: var(--muted); }
-</style>
+<title>tlk-truss — architecture diagrams bound to real code</title>
+<meta name="description" content="Diagram-as-code that knows when the picture started lying: every node is bound to a path in the repository, and truss check fails your build when that path is gone. Four views, single-file HTML, live editing.">
+<link rel="canonical" href="https://talkdedsec.github.io/tlk-truss/">
+<meta name="theme-color" content="#f1efe8">
+<meta name="color-scheme" content="light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="tlk-truss — architecture diagrams bound to real code">
+<meta property="og:description" content="Text in, single-file HTML out, and CI fails when the drawing drifts from the code.">
+<meta property="og:url" content="https://talkdedsec.github.io/tlk-truss/">
+<meta property="og:image" content="https://talkdedsec.github.io/tlk-truss/og.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f1efe8'/%3E%3Cpath d='M5 24L16 8l11 16M10 16.7h12M5 24h22' fill='none' stroke='%231f3dff' stroke-width='2.2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Fragment+Mono&display=swap">
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
 </head>
 <body>
-<main>
-<header>
-  <h1>tlk-truss</h1>
-  <p class="lede" data-tr="Gerçek koda bağlı mimari diyagramlar. Aşağıdaki çizimler aracın kendi çıktısı — her biri tek bir HTML dosyası, ağ yok, derleme adımı yok. Herhangi birinde &lt;b&gt;Düzenle&lt;/b&gt;&#x27;ye bas: motorun tamamı sayfanın içinde geliyor, sen değiştirdikçe diyagram kendini yeniden yerleştiriyor.">Architecture diagrams bound to real code. The drawings below are the tool's own
-  output — one HTML file each, no network, no build step. Press <b>Edit</b> inside any of them:
-  the whole engine ships in the page, so the diagram lays itself out again as you change it.</p>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+<header class="top">
+  <a class="brand" href="#top"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M5 24L16 8l11 16M10 16.7h12M5 24h22" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>tlk-truss</a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#views" data-i18n="nav.views">Four views</a>
+    <a href="#source" data-i18n="nav.source">The source</a>
+    <a href="#ci" data-i18n="nav.ci">In CI</a>
+    <a href="#install" data-i18n="nav.install">Install</a>
+  </nav>
+  <div class="top-end">
+    <button class="lang" type="button" aria-label="Türkçe / English"><span data-l="en">EN</span><span data-l="tr">TR</span></button>
+    <a class="gh" href="https://github.com/Talkdedsec/tlk-truss" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+  </div>
 </header>
 
-<section>
-  <h2 data-tr="Başka kimsenin yapmadığı kısım">The part nobody else does</h2>
-  <p class="lede" data-tr="Her düğüm temsil ettiği kodu adıyla gösterebilir. O kod taşındığında ya da silindiğinde diyagram bir resim olmaktan çıkıp başarısız bir build&#x27;e dönüşüyor.">Every node can name the code it stands for. When that code moves or disappears,
-  the diagram stops being a picture and starts being a failing build.</p>
-  <pre><code>$ truss check docs/architecture.truss --ci
-✗ docs/architecture.truss:14  E400  "ledger" is bound to src/ledger/**, which matches nothing
-1 binding(s) no longer resolve
-$ echo $?
-1</code></pre>
+<main id="main">
+<section class="hero" id="top">
+  <p class="over mono"><span data-i18n="hero.over">Diagram-as-code · four views · single-file HTML</span> · v0.4.0</p>
+  <h1 class="display" data-i18n-html="hero.h">Architecture diagrams that <em>fail the build</em> when they lie.</h1>
+  <p class="lede" data-i18n="hero.lede">Every diagram-as-code tool turns text into a picture. None of them can tell you when the picture started lying. truss binds each node to a path in the repository, and truss check fails your build when that path is gone.</p>
+
+  <div class="drift" aria-label="Drift demo" data-i18n-aria="d.aria">
+    <div class="tree">
+      <p class="mono lbl" data-i18n="d.repo">repository</p>
+      <ul class="files mono"></ul>
+      <p class="hint" data-i18n="d.hint">Delete a folder and watch the drawing.</p>
+    </div>
+    <div class="sheet">
+      <svg class="dia" viewBox="0 0 520 330" role="img" aria-label="Payment Platform architecture">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0l10 5-10 5z" fill="currentColor"/></marker></defs>
+        <rect class="grp" x="16" y="14" width="160" height="78" rx="10"/><text class="grp-t" x="28" y="32">Edge</text>
+        <rect class="grp" x="16" y="112" width="488" height="110" rx="10"/><text class="grp-t" x="28" y="130">Core services</text>
+        <g class="edges">
+          <path d="M96 78 V150" marker-end="url(#arr)"/><path d="M166 170 H224" marker-end="url(#arr)"/>
+          <path d="M346 170 H380" marker-end="url(#arr)" class="async"/><path d="M286 196 V264" marker-end="url(#arr)"/>
+        </g>
+        <g class="node" data-n="web"><rect x="36" y="40" width="120" height="38" rx="8"/><text x="96" y="64">Storefront</text></g>
+        <g class="node" data-n="api"><rect x="36" y="150" width="130" height="40" rx="8"/><text x="101" y="175">API Gateway</text></g>
+        <g class="node" data-n="pay"><rect x="226" y="150" width="120" height="40" rx="8"/><text x="286" y="175">Payment</text></g>
+        <g class="node queue" data-n="bus"><rect x="382" y="150" width="104" height="40" rx="20"/><text x="434" y="175">Event bus</text></g>
+        <g class="node ext" data-n="bank"><rect x="226" y="266" width="120" height="40" rx="8"/><text x="286" y="291">Acquirer</text></g>
+      </svg>
+    </div>
+    <div class="ci">
+      <p class="mono lbl">$ truss check docs/architecture.truss --ci</p>
+      <ol class="ci-out mono" aria-live="polite"></ol>
+      <button class="reset" type="button" data-i18n="d.reset">Restore the repository</button>
+    </div>
+  </div>
 </section>
 
-<section>
-  <h2 data-tr="Dört görünüm">The four views</h2>
-  <article>
-    <h2 data-tr="Mimari">Architecture</h2>
-    <p data-tr="Servisler, depolar ve sınırlar. Kod sahibi olan her kutu, sahip olduğu yolu taşıyor.">Services, stores and boundaries. Every box that owns code carries the path it owns.</p>
-    <iframe src="architecture.html" title="Architecture" loading="lazy"></iframe>
-    <a href="architecture.html" data-tr="Tek başına aç →">Open it on its own →</a>
-  </article>
-  <article>
-    <h2 data-tr="Sekans">Sequence</h2>
-    <p data-tr="Tek bir ödeme akışı, mesaj mesaj, kaynakta sıralandığı düzende.">One checkout, message by message, in the order the source lists them.</p>
-    <iframe src="sequence.html" title="Sequence" loading="lazy"></iframe>
-    <a href="sequence.html" data-tr="Tek başına aç →">Open it on its own →</a>
-  </article>
-  <article>
-    <h2 data-tr="Veri akışı">Data flow</h2>
-    <p data-tr="Soldan sağa okunan bir hat; kaynaklar ve hedefler eğik çiziliyor.">A pipeline read left to right; sources and sinks are drawn slanted.</p>
-    <iframe src="dataflow.html" title="Data flow" loading="lazy"></iframe>
-    <a href="dataflow.html" data-tr="Tek başına aç →">Open it on its own →</a>
-  </article>
-  <article>
-    <h2 data-tr="Yaşam döngüsü">Lifecycle</h2>
-    <p data-tr="Bir siparişin olabileceği haller, kendine geri dönen durum dahil.">What an order can be, including the state that loops back on itself.</p>
-    <iframe src="lifecycle.html" title="Lifecycle" loading="lazy"></iframe>
-    <a href="lifecycle.html" data-tr="Tek başına aç →">Open it on its own →</a>
-  </article>
+<section class="views" id="views">
+  <div class="views-head">
+    <p class="over mono" data-i18n="v.over">01 — Four views</p>
+    <h2 class="h2" data-i18n="v.h">Real output, not screenshots. Pan it, search it, press Edit.</h2>
+  </div>
+  <div class="vtabs" role="tablist" aria-label="Views">
+    <button role="tab" aria-selected="true" data-v="architecture" data-i18n="v.arch">Architecture</button>
+    <button role="tab" aria-selected="false" data-v="sequence" tabindex="-1" data-i18n="v.seq">Sequence</button>
+    <button role="tab" aria-selected="false" data-v="dataflow" tabindex="-1" data-i18n="v.flow">Data flow</button>
+    <button role="tab" aria-selected="false" data-v="lifecycle" tabindex="-1" data-i18n="v.life">Lifecycle</button>
+  </div>
+  <div class="frame" role="tabpanel">
+    <p class="vdesc"></p>
+    <iframe title="tlk-truss diagram" loading="lazy" src="architecture.html"></iframe>
+    <a class="open mono" href="architecture.html" data-i18n="v.open">open full page ↗</a>
+  </div>
 </section>
 
-<footer>
-  <a href="https://github.com/Talkdedsec/tlk-truss" data-tr="GitHub'da kaynak kodu">Source on GitHub</a> ·
-  PolyForm Noncommercial 1.0.0 ·
-  <a href="https://github.com/Talkdedsec/tlk-truss/blob/main/README.tr.md" data-tr="Türkçe README">Türkçe</a>
-</footer>
+<section class="source" id="source">
+  <div class="src-text">
+    <p class="over mono" data-i18n="s.over">02 — The source</p>
+    <h2 class="h2" data-i18n-html="s.h">Text you can review. <em>No coordinates.</em></h2>
+    <p class="body" data-i18n="s.p">The layout is automatic and always is: cycles broken, layers assigned, crossings counted and minimised, group boxes pushed clear. A diagram you have to hand-place is a diagram nobody updates.</p>
+    <ul class="gram">
+      <li><code>-&gt;</code> <span data-i18n="s.call">a call</span></li>
+      <li><code>~&gt;</code> <span data-i18n="s.async">an asynchronous message</span></li>
+      <li><code>code=</code> <span data-i18n="s.code">the binding: a path or a glob</span></li>
+      <li><code>kind=</code> <span>service · store · queue · infra · client · external · job</span></li>
+      <li><code>dugum</code> <span data-i18n="s.tr">every keyword also has a Turkish spelling</span></li>
+    </ul>
+  </div>
+<pre class="code mono" aria-label="payments.truss"><code><span class="k">title</span>  Payment Platform
+<span class="k">flow</span>   down
+<span class="k">group</span> edge <span class="s">"Edge"</span>
+<span class="k">group</span> core <span class="s">"Core services"</span>
+<span class="k">node</span> web    <span class="s">"Storefront"</span>  <span class="a">in=</span>edge <span class="a">kind=</span>client  <span class="b">code=apps/web/**</span>
+<span class="k">node</span> api    <span class="s">"API Gateway"</span> <span class="a">in=</span>core <span class="a">kind=</span>service <span class="b">code=services/api/**</span>
+<span class="k">node</span> pay    <span class="s">"Payment"</span>     <span class="a">in=</span>core <span class="a">kind=</span>service <span class="b">code=services/payment/**</span>
+<span class="k">node</span> bus    <span class="s">"Event bus"</span>   <span class="a">in=</span>core <span class="a">kind=</span>queue
+<span class="k">node</span> bank   <span class="s">"Acquirer"</span>            <span class="a">kind=</span>external <span class="a">note=</span><span class="s">"third party"</span>
+web -&gt; api : REST
+api -&gt; pay : charge
+pay ~&gt; bus : payment.captured
+pay -&gt; bank : authorise</code></pre>
+</section>
+
+<section class="ci-sec" id="ci">
+  <p class="over mono" data-i18n="c.over">03 — In CI</p>
+  <div class="ci-grid">
+    <div class="reveal">
+      <h3 data-i18n="c.1h">One line in a workflow</h3>
+<pre class="code mono"><code>- run: npx @talkdedsec/tlk-truss check docs/architecture.truss --ci</code></pre>
+    </div>
+    <div class="reveal">
+      <h3 data-i18n="c.2h">Or the action</h3>
+<pre class="code mono"><code>- uses: Talkdedsec/tlk-truss@v0.4.0
+  with:
+    sources: docs/*.truss
+    uncovered: true</code></pre>
+    </div>
+    <div class="reveal wide">
+      <h3 data-i18n="c.3h">Turn the question around</h3>
+      <p class="body" data-i18n="c.3p">--strict flags nodes with no binding at all. --uncovered asks which directories no diagram claims; several sources are checked together and the coverage is their union.</p>
+<pre class="code mono"><code>$ truss check docs/*.truss --root . --uncovered
+<span class="w">! /srv/shop  W401  no node claims "workers/"</span>
+<span class="g">✓ every code binding resolves — 21/26 nodes bound to code</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="cmds">
+  <p class="over mono" data-i18n="k.over">04 — Commands</p>
+  <dl class="cmd-list mono">
+    <div class="reveal"><dt>truss draw</dt><dd data-i18n="k.draw">render a single-file HTML diagram</dd></div>
+    <div class="reveal"><dt>truss check</dt><dd data-i18n="k.check">verify every code binding still resolves</dd></div>
+    <div class="reveal"><dt>truss export</dt><dd>svg · dot · mermaid · json</dd></div>
+    <div class="reveal"><dt>truss import</dt><dd data-i18n="k.import">convert Mermaid into a .truss source</dd></div>
+    <div class="reveal"><dt>truss watch</dt><dd data-i18n="k.watch">redraw on every save, --serve reloads the browser</dd></div>
+  </dl>
+</section>
+
+<section class="numbers">
+  <div class="num reveal"><b>83</b><span data-i18n="n.unit">unit tests</span></div>
+  <div class="num reveal"><b>8</b><span data-i18n="n.browser">tests driving the page in a real browser</span></div>
+  <div class="num reveal"><b>0</b><span data-i18n="n.deps">runtime dependencies, Node 20+</span></div>
+  <div class="num reveal"><b>93<small>ms</small></b><span data-i18n="n.speed">to lay out 250 nodes and 369 connections</span></div>
+  <p class="num-note reveal" data-i18n="n.note">Speed is never the problem; legibility is. Past roughly thirty nodes the picture stops explaining anything, so split the story into several diagrams.</p>
+</section>
+
+<section class="install" id="install">
+  <div class="inst">
+    <div>
+      <p class="over mono" data-i18n="i.over">05 — Install</p>
+      <h2 class="h2" data-i18n-html="i.h">One package. <em>No build step.</em></h2>
+      <p class="body" data-i18n="i.p">One HTML file per diagram: no network calls, dark and light themes, pan and zoom, search, a detail panel per node, SVG and PNG export.</p>
+    </div>
+    <div>
+<pre class="code mono big"><code>npm install -g @talkdedsec/tlk-truss</code><button class="copy" type="button" data-i18n="copy">Copy</button></pre>
+<pre class="code mono"><code>truss draw examples/payments.truss -o payments.html</code><button class="copy" type="button" data-i18n="copy">Copy</button></pre>
+      <p class="lic" data-i18n-html="i.lic">Free for non-commercial use under <a href="https://github.com/Talkdedsec/tlk-truss/blob/main/LICENSE">PolyForm Noncommercial 1.0.0</a>. Using it at work? See <a href="https://github.com/Talkdedsec/tlk-truss/blob/main/COMMERCIAL.md">COMMERCIAL.md</a>.</p>
+    </div>
+  </div>
+</section>
 </main>
-<button class="lang-toggle" type="button" hidden></button>
-<script>
-// English is the page's source text; translated elements carry their Turkish in
-// data-tr. Shares the diagram pages' key, so one choice covers the whole site.
-(() => {
-  const KEY = 'truss-lang';
-  const root = document.documentElement;
-  const nodes = [...document.querySelectorAll('[data-tr]')];
-  nodes.forEach((n) => (n.dataset.en = n.innerHTML));
-  const toggle = document.querySelector('.lang-toggle');
-  const apply = (lang) => {
-    root.lang = lang;
-    nodes.forEach((n) => (n.innerHTML = lang === 'tr' ? n.dataset.tr : n.dataset.en));
-    toggle.textContent = lang === 'tr' ? 'EN' : 'TR';
-    toggle.lang = lang === 'tr' ? 'en' : 'tr';
-    toggle.setAttribute('aria-label', lang === 'tr' ? 'Switch to English' : 'Türkçeye geç');
-  };
-  let lang = null;
-  try { lang = localStorage.getItem(KEY); } catch {}
-  if (lang !== 'en' && lang !== 'tr')
-    lang = (navigator.language || '').toLowerCase().startsWith('tr') ? 'tr' : 'en';
-  apply(lang);
-  toggle.hidden = false;
-  toggle.addEventListener('click', () => {
-    lang = lang === 'tr' ? 'en' : 'tr';
-    try { localStorage.setItem(KEY, lang); } catch {}
-    apply(lang);
-  });
-})();
-</script>
+
+<footer class="foot">
+  <p class="foot-word" aria-hidden="true">truss check<span class="ok">✓</span></p>
+  <div class="foot-row">
+    <nav aria-label="Project">
+      <a href="https://github.com/Talkdedsec/tlk-truss">GitHub</a>
+      <a href="https://www.npmjs.com/package/@talkdedsec/tlk-truss">npm</a>
+      <a href="https://github.com/Talkdedsec/tlk-truss/blob/main/CHANGELOG.md" data-i18n="foot.log">Changelog</a>
+      <a href="https://github.com/Talkdedsec/tlk-truss/security/policy" data-i18n="foot.sec">Security</a>
+    </nav>
+    <p class="mono">© 2026 <a href="https://talkdedsec.com">Talkdedsec</a></p>
+  </div>
+</footer>
 </body>
 </html>
